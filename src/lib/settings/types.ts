@@ -1,3 +1,4 @@
+import type { CalendarPosterSize } from "@/lib/calendar";
 import type { ControllerCursorId } from "@/lib/gamepad/cursor";
 import type { ThemeSettings } from "@/lib/theme";
 import type { CustomList } from "@/lib/lists/types";
@@ -584,6 +585,7 @@ export type Settings = {
   simklScrobbleEnabled: boolean;
   simklAnimeTitleLanguage: "english" | "romaji" | "native";
   weekStartsMonday: boolean;
+  calendarPosterSize: CalendarPosterSize;
   customCalendar: {
     trackedPeople: Array<{
       id: number;

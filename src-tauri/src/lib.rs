@@ -124,11 +124,13 @@ mod p2p_android;
 
 #[cfg(desktop)]
 pub(crate) fn release_stremio_scheme(app: &tauri::AppHandle) {
+    use std::io::Write;
     use tauri_plugin_deep_link::DeepLinkExt;
-    match app.deep_link().unregister("stremio") {
-        Ok(()) => eprintln!("[harbor::deeplink] released stremio:// on shutdown"),
-        Err(e) => eprintln!("[harbor::deeplink] could not release stremio://: {}", e),
-    }
+    let msg = match app.deep_link().unregister("stremio") {
+        Ok(()) => "[harbor::deeplink] released stremio:// on shutdown".to_string(),
+        Err(e) => format!("[harbor::deeplink] could not release stremio://: {}", e),
+    };
+    let _ = writeln!(std::io::stderr(), "{}", msg);
 }
 
 #[cfg(desktop)]
