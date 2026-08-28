@@ -36,6 +36,8 @@ mod airplay;
 #[cfg(desktop)]
 mod anime4k;
 #[cfg(desktop)]
+mod app_icon;
+#[cfg(desktop)]
 mod asr_model;
 #[cfg(desktop)]
 mod browser;
@@ -988,6 +990,7 @@ pub fn run() {
             stremio_auth::stremio_auth_start,
             song_id::recognize_now_playing,
             song_id::recognize_now_playing_ai,
+            app_icon::set_app_icon,
             deeplink_set_stremio,
             deeplink_is_stremio_registered,
             harbor_take_pending_file,
