@@ -3,7 +3,7 @@ import { ArrowDownToLine, Star } from "lucide-react";
 import type { StoreTheme } from "@/lib/theme-store";
 import type { StoreBundle } from "@/lib/bundle-store";
 import { FeaturedBadge } from "@/views/profile/profile-bits";
-import { UserHoverCard } from "@/views/profile/user-hover-card";
+import { ThemeAuthorButton } from "../../theme-author-button";
 import { fmtCount } from "../format";
 import { Fit } from "./fit";
 import { PaletteSeam } from "./palette-seam";
@@ -41,7 +41,14 @@ export function MarketHero({
   let art: ReactNode;
   if ("swatch" in item) {
     payload = <PaletteSeam swatch={item.swatch} labeled />;
-    art = <Fit kind="theme" tokens={tokensFromStoreTheme(item)} cover={item.cover ?? item.screenshots[0] ?? null} size="hero" />;
+    art = (
+      <Fit
+        kind="theme"
+        tokens={tokensFromStoreTheme(item)}
+        cover={item.cover ?? item.screenshots[0] ?? null}
+        size="hero"
+      />
+    );
   } else {
     payload = <PackContents bundle={item} variant="hero" />;
     art = <Fit kind={item.kind} icons={item.icons} cover={item.cover} size="hero" />;
@@ -74,11 +81,9 @@ export function MarketHero({
             {fmtCount(item.downloads)} downloads
           </span>
           {"swatch" in item && item.authorHandle ? (
-            <UserHoverCard handle={item.authorHandle}>
-              <span className="cursor-pointer transition-colors hover:text-ink">
-                by {item.author || "Anonymous"}
-              </span>
-            </UserHoverCard>
+            <span>
+              by <ThemeAuthorButton handle={item.authorHandle} name={item.author || "Anonymous"} />
+            </span>
           ) : (
             <span>by {item.author || "Anonymous"}</span>
           )}
@@ -95,7 +100,9 @@ export function MarketHero({
           <MarketCta variant="ghost" size="lg" onClick={() => onOpen(item)} label="View details" />
         </div>
       </div>
-      <div className="relative order-1 min-h-[220px] overflow-hidden md:order-2 md:min-h-full">{art}</div>
+      <div className="relative order-1 min-h-[220px] overflow-hidden md:order-2 md:min-h-full">
+        {art}
+      </div>
     </section>
   );
 }

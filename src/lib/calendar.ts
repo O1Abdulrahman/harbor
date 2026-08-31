@@ -407,9 +407,9 @@ export async function fetchCustomCalendar(opts: {
   const wantTv = filters.mediaTypes.tv;
   const wantAnime = filters.mediaTypes.anime;
 
-  const tasks: Promise<CalendarItem[]>[] = [
-    ...filters.trackedPeople.map((p) => fetchPersonUpcoming(apiKey, p, start, end)),
-  ];
+  const tasks: Promise<CalendarItem[]>[] = filters.trackedPeople.map((p) =>
+    fetchPersonUpcoming(apiKey, p, start, end),
+  );
   if (wantMovie || wantAnime) {
     tasks.push(
       discoverFiltered({

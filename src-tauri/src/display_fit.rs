@@ -6,6 +6,11 @@ const FLOOR_W: f64 = 480.0;
 const FLOOR_H: f64 = 400.0;
 const MARGIN: f64 = 0.94;
 
+fn clamp_origin(current: f64, visible_start: f64, visible_len: f64, window_len: f64) -> f64 {
+    let max = visible_start + (visible_len - window_len).max(0.0);
+    current.clamp(visible_start, max)
+}
+
 #[cfg(target_os = "macos")]
 fn macos_screen_insets(window: &WebviewWindow) -> Option<(f64, f64, f64, f64)> {
     let _mtm = objc2_foundation::MainThreadMarker::new()?;
@@ -85,14 +90,40 @@ pub fn fit_to_monitor(window: &WebviewWindow) {
     let cur_h = inner.height as f64 / scale;
     let want_w = cur_w.min(usable_w).max(min_w);
     let want_h = cur_h.min(usable_h).max(min_h);
-    if (want_w - cur_w).abs() < 1.0 && (want_h - cur_h).abs() < 1.0 {
-        return;
+    let resized = (want_w - cur_w).abs() >= 1.0 || (want_h - cur_h).abs() >= 1.0;
+    if resized {
+        let _ = window.set_size(LogicalSize::new(want_w, want_h));
     }
-    let _ = window.set_size(LogicalSize::new(want_w, want_h));
 
-    let left = mon_pos.x as f64 + (left_inset + ((vis_w - want_w).max(0.0) / 2.0)) * scale;
-    let top = mon_pos.y as f64 + (top_inset + ((vis_h - want_h).max(0.0) / 2.0)) * scale;
-    let _ = window.set_position(PhysicalPosition::new(left.round() as i32, top.round() as i32));
+    let visible_left = mon_pos.x as f64 + left_inset * scale;
+    let visible_top = mon_pos.y as f64 + top_inset * scale;
+    let visible_width = vis_w * scale;
+    let visible_height = vis_h * scale;
+    let window_width = want_w * scale;
+    let window_height = want_h * scale;
+    let (left, top) = if resized {
+        (
+            visible_left + ((visible_width - window_width).max(0.0) / 2.0),
+            visible_top + ((visible_height - window_height).max(0.0) / 2.0),
+        )
+    } else {
+        let Ok(position) = window.outer_position() else {
+            return;
+        };
+        (
+            clamp_origin(position.x as f64, visible_left, visible_width, window_width),
+            clamp_origin(
+                position.y as f64,
+                visible_top,
+                visible_height,
+                window_height,
+            ),
+        )
+    };
+    let target = PhysicalPosition::new(left.round() as i32, top.round() as i32);
+    if resized || window.outer_position().ok() != Some(target) {
+        let _ = window.set_position(target);
+    }
 }
 
 pub fn install(app: &tauri::AppHandle) {
@@ -137,5 +168,12 @@ mod tests {
         let usable = (mon_w * super::MARGIN).max(super::FLOOR_W);
         let min_w = super::CONFIG_MIN_W.min(usable).max(super::FLOOR_W);
         assert_eq!(min_w, super::FLOOR_W);
+    }
+
+    #[test]
+    fn clamps_an_existing_window_inside_the_visible_frame() {
+        assert_eq!(super::clamp_origin(-20.0, 24.0, 1000.0, 900.0), 24.0);
+        assert_eq!(super::clamp_origin(300.0, 24.0, 1000.0, 900.0), 124.0);
+        assert_eq!(super::clamp_origin(80.0, 24.0, 1000.0, 900.0), 80.0);
     }
 }

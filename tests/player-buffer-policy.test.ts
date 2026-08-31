@@ -46,7 +46,10 @@ test("a fully downloaded local file is reported as cached immediately, not buffe
   );
 
   assert.ok(p2pBranchAt !== -1, "playback-downloaded effect's P2P branch is missing");
-  assert.ok(localBranchAt !== -1, "local-source branch is missing from the playback-downloaded effect");
+  assert.ok(
+    localBranchAt !== -1,
+    "local-source branch is missing from the playback-downloaded effect",
+  );
   assert.ok(genericBufferBranchAt !== -1, "generic position+buffered heuristic branch is missing");
   assert.ok(
     p2pBranchAt < localBranchAt && localBranchAt < genericBufferBranchAt,

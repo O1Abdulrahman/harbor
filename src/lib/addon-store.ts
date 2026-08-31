@@ -4,6 +4,7 @@ import { setUserAddons, userAddons, type Addon } from "./addons";
 import {
   applyOrderToItems,
   loadDisplayOrder,
+  replaceUrlsInOrder,
   saveDisplayOrder,
 } from "./addons-store/reorder";
 
@@ -255,19 +256,7 @@ function preserveOrderOnReplace(oldUrls: string[], newUrl: string): void {
     order = loadInstalled().map((a) => a.transportUrl);
   }
   if (order.length === 0) return;
-  const replaced = order.map((u) => (oldUrls.includes(u) ? newUrl : u));
-  const deduped: string[] = [];
-  for (const u of replaced) {
-    if (u === newUrl) {
-      if (!deduped.includes(newUrl)) deduped.push(newUrl);
-    } else {
-      deduped.push(u);
-    }
-  }
-  for (const u of oldUrls) {
-    if (!deduped.includes(u)) deduped.push(u);
-  }
-  saveDisplayOrder(deduped);
+  saveDisplayOrder(replaceUrlsInOrder(order, oldUrls, newUrl));
 }
 
 export function loadDisabledAddons(): Set<string> {
@@ -398,12 +387,8 @@ export async function installAddon(id: string, transportUrl: string): Promise<Ad
   const canonicalId = manifest.id || id;
   const before = loadInstalled();
   // Deduplicate by ID (handles URL changes during updates) and by URL (re-installs)
-  const next = before.filter(
-    (a) => a.id !== canonicalId && a.transportUrl !== transportUrl,
-  );
-  const replaced = before.filter(
-    (a) => a.id === canonicalId || a.transportUrl === transportUrl,
-  );
+  const next = before.filter((a) => a.id !== canonicalId && a.transportUrl !== transportUrl);
+  const replaced = before.filter((a) => a.id === canonicalId || a.transportUrl === transportUrl);
   const replacedUrls = replaced.map((a) => a.transportUrl);
   if (replaced.length > 0) {
     preserveOrderOnReplace(replacedUrls, transportUrl);
@@ -429,10 +414,7 @@ export async function installFromUrl(
   const replacedByOld = replaceId != null && before.some((a) => a.id === replaceId);
   // Deduplicate by ID (updates), URL (re-installs), or explicit replaceId
   const next = before.filter(
-    (a) =>
-      a.id !== id &&
-      a.transportUrl !== parsed.url &&
-      (!replaceId || a.id !== replaceId),
+    (a) => a.id !== id && a.transportUrl !== parsed.url && (!replaceId || a.id !== replaceId),
   );
   const replaced = before.filter(
     (a) =>

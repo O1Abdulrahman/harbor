@@ -5,7 +5,7 @@ import { animeIdentityEligible, resolveAnimeIdentity } from "@/lib/streams/anime
 import { profileFromMeta } from "@/lib/discover/profile";
 import { trackEvent } from "@/lib/discover/store";
 import { isExternalPlaylistId } from "@/lib/iptv/vod";
-import { saveLocalCw } from "@/lib/local-cw";
+import { clearLocalCw, localCwEntry, saveLocalCw } from "@/lib/local-cw";
 import { recordWatchEvent } from "@/lib/watch-events";
 import { isLocalUrl } from "@/lib/player/local-url";
 import { isManuallyWatched, recordManualWatchedMeta, setManualWatched } from "@/lib/manual-watched";
@@ -110,7 +110,10 @@ export function useResumeAutosave(params: {
       const { resolvedImdbId: rid, resolvedImdbVerified: rv } = latestRef.current;
       void syncSeriesWatchedToStremio(s.meta, rv ? rid : null);
     }
-    if (s.meta.type === "movie" && finished) setMovieWatchedLocal(id, true);
+    if (s.meta.type === "movie" && finished) {
+      setMovieWatchedLocal(id, true);
+      clearLocalCw(id);
+    }
     if (finished) {
       recordWatchEvent({
         id,
@@ -131,13 +134,14 @@ export function useResumeAutosave(params: {
     // must put it back in Continue Watching even when the Stremio cloud write is skipped (e.g.
     // signed out). Clearing the local watched marker and tracking it locally yields an in-progress
     // item with flaggedWatched=0 that isCwMember accepts, independent of authKey.
+    const movieWasWatched = s.meta.type === "movie" && isMovieWatchedLocal(id);
     const rewatchMovie =
       s.meta.type === "movie" &&
       sn.durationSec > 0 &&
       pos >= REWATCH_RESUME_SEC &&
       pos / sn.durationSec < WATCHED_RATIO &&
-      isMovieWatchedLocal(id);
-    if (rewatchMovie) setMovieWatchedLocal(id, false);
+      (movieWasWatched || localCwEntry(id) !== null);
+    if (rewatchMovie && movieWasWatched) setMovieWatchedLocal(id, false);
     if (
       (s.meta.type === "series" || s.meta.type === "movie" || animeLocal) &&
       (!CLOUD_OK.test(id) || isLocalUrl(s.url) || animeLocal || ttAnimeUnmapped || rewatchMovie)

@@ -49,7 +49,13 @@ function loadCard(handle: string): Promise<CardData> {
 
 const CARD_W = 300;
 
-export function UserHoverCard({ handle, children }: { handle: string; children: ReactElement<any> }) {
+export function UserHoverCard({
+  handle,
+  children,
+}: {
+  handle: string;
+  children: ReactElement<any>;
+}) {
   const [anchor, setAnchor] = useState<DOMRect | null>(null);
   const ref = useRef<HTMLElement>(null);
   const openTimer = useRef<number | null>(null);
@@ -88,10 +94,13 @@ export function UserHoverCard({ handle, children }: { handle: string; children: 
     return () => window.removeEventListener("scroll", close, true);
   }, [anchor]);
 
-  useEffect(() => () => {
-    clearOpen();
-    clearClose();
-  }, []);
+  useEffect(
+    () => () => {
+      clearOpen();
+      clearClose();
+    },
+    [],
+  );
 
   const childProps = children.props as {
     onMouseEnter?: (e: unknown) => void;
@@ -131,7 +140,12 @@ export function UserHoverCard({ handle, children }: { handle: string; children: 
     <>
       {trigger}
       {anchor && (
-        <ProfileHoverCard handle={handle} anchor={anchor} onEnter={clearClose} onLeave={scheduleClose} />
+        <ProfileHoverCard
+          handle={handle}
+          anchor={anchor}
+          onEnter={clearClose}
+          onLeave={scheduleClose}
+        />
       )}
     </>
   );
@@ -178,7 +192,8 @@ export function ProfileHoverCard({
     const gap = 10;
     const h = el.offsetHeight;
     const leftSlot = anchor.left - gap - CARD_W;
-    const left = leftSlot >= 12 ? leftSlot : Math.min(anchor.right + gap, window.innerWidth - CARD_W - 12);
+    const left =
+      leftSlot >= 12 ? leftSlot : Math.min(anchor.right + gap, window.innerWidth - CARD_W - 12);
     const top = Math.max(12, Math.min(anchor.top, window.innerHeight - h - 12));
     setPlaced({ top, left });
   }, [anchor, data, failed]);
@@ -186,7 +201,7 @@ export function ProfileHoverCard({
   const summary = data?.summary;
   const badges = orderShownBadges(data?.badges ?? [], data?.summary?.shownBadges);
   const mine = !!self.handle && self.handle.toLowerCase() === key;
-  const cardAvatar = mine ? self.avatar ?? summary?.avatarUrl : summary?.avatarUrl;
+  const cardAvatar = mine ? (self.avatar ?? summary?.avatarUrl) : summary?.avatarUrl;
   const bio = summary?.slogan?.trim();
   const locationFlag = summary?.location ? regionFlagSrc(summary.location) : null;
 
@@ -198,7 +213,10 @@ export function ProfileHoverCard({
       aria-label={t("Open @{handle} profile", { handle: summary?.handle ?? handle })}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      onClick={() => requestOpenProfile(handle)}
+      onClick={(event) => {
+        event.stopPropagation();
+        requestOpenProfile(handle);
+      }}
       style={{
         width: CARD_W,
         left: placed?.left ?? anchor.left,
@@ -211,7 +229,12 @@ export function ProfileHoverCard({
     >
       <div className="relative h-[72px] w-full">
         {summary?.bannerUrl ? (
-          <img src={summary.bannerUrl} alt="" draggable={false} className="h-full w-full object-cover" />
+          <img
+            src={summary.bannerUrl}
+            alt=""
+            draggable={false}
+            className="h-full w-full object-cover"
+          />
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-accent/25 via-raised to-surface" />
         )}
@@ -221,7 +244,12 @@ export function ProfileHoverCard({
       <div className="px-4 pb-4">
         <div className="-mt-9 mb-2.5 flex items-end justify-between">
           <span className="rounded-full bg-elevated p-[3px]">
-            <Avatar src={cardAvatar} size={60} online={summary?.online} alias={summary?.alias ?? handle} />
+            <Avatar
+              src={cardAvatar}
+              size={60}
+              online={summary?.online}
+              alias={summary?.alias ?? handle}
+            />
           </span>
         </div>
 
@@ -231,13 +259,17 @@ export function ProfileHoverCard({
           </span>
           {summary?.verified && <VerifiedCheck size={16} />}
         </div>
-        <div className="mt-0.5 truncate text-[12.5px] text-ink-subtle">@{summary?.handle ?? handle}</div>
+        <div className="mt-0.5 truncate text-[12.5px] text-ink-subtle">
+          @{summary?.handle ?? handle}
+        </div>
 
         {summary ? (
           <>
             <div className="mt-2 flex items-center gap-2 text-[11.5px] text-ink-muted">
               <span className="inline-flex items-center gap-1.5">
-                <span className={`h-2 w-2 rounded-full ${summary.online ? "bg-success" : "bg-ink-subtle"}`} />
+                <span
+                  className={`h-2 w-2 rounded-full ${summary.online ? "bg-success" : "bg-ink-subtle"}`}
+                />
                 {summary.online ? t("Online") : t("Offline")}
               </span>
               {summary.location && (
@@ -270,7 +302,9 @@ export function ProfileHoverCard({
                   <BadgeDot key={b.id} badge={b} />
                 ))}
                 {badges.length > 6 && (
-                  <span className="text-[11px] font-medium text-ink-subtle">+{badges.length - 6}</span>
+                  <span className="text-[11px] font-medium text-ink-subtle">
+                    +{badges.length - 6}
+                  </span>
                 )}
               </div>
             )}
@@ -282,7 +316,9 @@ export function ProfileHoverCard({
             )}
           </>
         ) : failed ? (
-          <p className="mt-3 text-[12px] text-ink-subtle">{t("Preview unavailable. Click to open profile.")}</p>
+          <p className="mt-3 text-[12px] text-ink-subtle">
+            {t("Preview unavailable. Click to open profile.")}
+          </p>
         ) : (
           <div className="mt-3 space-y-2">
             <div className={`h-3 w-24 rounded bg-raised ${reduced ? "" : "animate-pulse"}`} />
@@ -306,9 +342,16 @@ function BadgeDot({ badge }: { badge: Badge }) {
       className="grid h-6 w-6 place-items-center"
     >
       {badge.iconUrl ? (
-        <img src={badge.iconUrl} alt="" draggable={false} className="h-full w-full object-contain drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]" />
+        <img
+          src={badge.iconUrl}
+          alt=""
+          draggable={false}
+          className="h-full w-full object-contain drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]"
+        />
       ) : (
-        <span className="text-[10px] font-semibold text-ink">{badge.name.charAt(0).toUpperCase()}</span>
+        <span className="text-[10px] font-semibold text-ink">
+          {badge.name.charAt(0).toUpperCase()}
+        </span>
       )}
     </HoverTooltip>
   );

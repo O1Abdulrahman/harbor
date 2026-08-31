@@ -1,4 +1,5 @@
 import { isTauri } from "@tauri-apps/api/core";
+import { osClass } from "@/lib/platform";
 
 function dataUrlToBytes(dataUrl: string): Uint8Array | null {
   const comma = dataUrl.indexOf(",");
@@ -17,6 +18,9 @@ export type ApplyIconResult = { ok: true } | { ok: false; reason: string };
 
 export async function applyAppIcon(dataUrl: string): Promise<ApplyIconResult> {
   if (!isTauri()) return { ok: false, reason: "not running in the desktop app" };
+  if (osClass() === "android" || osClass() === "web") {
+    return { ok: false, reason: "app icons are only supported on desktop" };
+  }
   const bytes = dataUrl ? dataUrlToBytes(dataUrl) : null;
   if (dataUrl && !bytes) return { ok: false, reason: "could not read the icon image" };
   try {

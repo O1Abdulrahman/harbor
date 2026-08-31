@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useSimkl } from "./provider";
 import { simklScrobble, buildBody, type ScrobbleInfo } from "./scrobble";
 import { addToHistory, markEpisodesWatched } from "./history";
-import { stremioIdToSimklTarget } from "./ids";
+import { resolveSimklEpisodeTarget, stremioIdToSimklTarget } from "./ids";
 import { getPlaybackPosition } from "@/lib/player/playback-clock";
 import { useSettings } from "@/lib/settings";
 import type { PlayerSrc } from "@/lib/view";
@@ -45,7 +45,11 @@ export function useSimklScrobble({ src, snap }: { src: PlayerSrc; snap: Snap }):
   const lastKeyRef = useRef<string | null>(null);
   const infoRef = useRef<ScrobbleInfo>(srcInfo(src));
   infoRef.current = srcInfo(src);
-  const prevIdentityRef = useRef({ metaId: src.meta.id, episode: src.episode, info: infoRef.current });
+  const prevIdentityRef = useRef({
+    metaId: src.meta.id,
+    episode: src.episode,
+    info: infoRef.current,
+  });
   const progressRef = useRef(0);
   const loadResetSeenRef = useRef(true);
 
@@ -80,7 +84,7 @@ export function useSimklScrobble({ src, snap }: { src: PlayerSrc; snap: Snap }):
       if (enabled && lastActionRef.current !== "stop") {
         if (prevProgress >= WATCHED_MARK_PCT) {
           sendBeacon(prev.metaId, prev.episode, 100, "stop", prev.info);
-          void recordWatchedFallback(prev.metaId, prev.episode);
+          void recordWatchedFallback(prev.metaId, prev.episode, prev.info);
         } else if (prevProgress > 0) {
           void simklScrobble("pause", prev.metaId, prev.episode, prevProgress, prev.info);
         }
@@ -108,7 +112,9 @@ export function useSimklScrobble({ src, snap }: { src: PlayerSrc; snap: Snap }):
               )
             : 100;
         sendBeacon(metaId, src.episode, endPct, "stop", infoRef.current);
-        void recordWatchedFallback(metaId, src.episode);
+        if (endPct >= WATCHED_MARK_PCT) {
+          void recordWatchedFallback(metaId, src.episode, infoRef.current);
+        }
         lastActionRef.current = "stop";
       }
       return;
@@ -201,10 +207,15 @@ function sendBeacon(
 async function recordWatchedFallback(
   metaId: string,
   episode: PlayerSrc["episode"] | undefined,
+  info?: ScrobbleInfo,
 ): Promise<void> {
   const r = stremioIdToSimklTarget(metaId, episode);
-  if (!r.ok) return;
-  const t = r.target;
+  const t = r.ok
+    ? r.target
+    : episode
+      ? await resolveSimklEpisodeTarget(metaId, episode, info?.imdb)
+      : null;
+  if (!t) return;
   if (t.kind === "episode") await markEpisodesWatched(t.show.ids, t.season, [t.number]);
   else if (t.kind === "anime-episode") await markEpisodesWatched(t.anime.ids, t.season, [t.number]);
   else await addToHistory(t);

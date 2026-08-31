@@ -4,8 +4,8 @@ import { createPortal } from "react-dom";
 import { ArrowDownToLine, Check, RefreshCw, Share2, Star, X } from "lucide-react";
 import { downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
 import { FeaturedBadge } from "@/views/profile/profile-bits";
-import { UserHoverCard } from "@/views/profile/user-hover-card";
 import { subscribeOpenProfile } from "@/lib/social/open-profile";
+import { ThemeAuthorButton } from "../theme-author-button";
 import { fmtCount } from "./format";
 import { CommentsSection } from "./comments/comments-section";
 import { Fit } from "./market/fit";
@@ -60,9 +60,17 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
   const shownStars = hover || myRating || Math.round(t.ratingAvg);
 
   return createPortal(
-    <div className={`${closing ? "animate-scrim-out" : "animate-scrim-in"} fixed inset-0 z-[244] flex items-center justify-center p-4 sm:p-6`}>
-      <button aria-label="Close" onClick={close} className="absolute inset-0 cursor-default bg-canvas/75 backdrop-blur-sm" />
-      <div className={`modal-panel ${closing ? "animate-dialog-out" : "animate-dialog-in"} relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-md bg-elevated ring-1 ring-edge-soft harbor-float`}>
+    <div
+      className={`${closing ? "animate-scrim-out" : "animate-scrim-in"} fixed inset-0 z-[244] flex items-center justify-center p-4 sm:p-6`}
+    >
+      <button
+        aria-label="Close"
+        onClick={close}
+        className="absolute inset-0 cursor-default bg-canvas/75 backdrop-blur-sm"
+      />
+      <div
+        className={`modal-panel ${closing ? "animate-dialog-out" : "animate-dialog-in"} relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-md bg-elevated ring-1 ring-edge-soft harbor-float`}
+      >
         <button
           onClick={close}
           aria-label="Close"
@@ -96,11 +104,10 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
                     {fmtCount(t.downloads)}
                   </span>
                   {t.authorHandle ? (
-                    <UserHoverCard handle={t.authorHandle}>
-                      <span className="cursor-pointer transition-colors hover:text-ink">
-                        by {t.author || "Anonymous"}
-                      </span>
-                    </UserHoverCard>
+                    <span>
+                      by{" "}
+                      <ThemeAuthorButton handle={t.authorHandle} name={t.author || "Anonymous"} />
+                    </span>
                   ) : (
                     <span>by {t.author || "Anonymous"}</span>
                   )}
@@ -116,7 +123,13 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
               <PaletteSeam swatch={t.swatch} labeled />
 
               <div className="flex flex-wrap items-center gap-2.5">
-                <MarketCta variant="acquire" size="md" state={state} onClick={run} label="Get theme" />
+                <MarketCta
+                  variant="acquire"
+                  size="md"
+                  state={state}
+                  onClick={run}
+                  label="Get theme"
+                />
                 <MarketCta variant="ghost" size="md" onClick={share}>
                   {copied ? <Check size={16} /> : <Share2 size={16} />}
                   {copied ? "Copied" : "Share"}
@@ -125,7 +138,12 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
 
               <div className="flex items-center gap-2.5">
                 <span className="text-[12.5px] font-medium text-ink-subtle">Rate this theme</span>
-                <div className="flex items-center gap-0.5" role="group" aria-label="Rate this theme" onMouseLeave={() => setHover(0)}>
+                <div
+                  className="flex items-center gap-0.5"
+                  role="group"
+                  aria-label="Rate this theme"
+                  onMouseLeave={() => setHover(0)}
+                >
                   {[1, 2, 3, 4, 5].map((n) => (
                     <button
                       key={n}
@@ -134,7 +152,10 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
                       aria-label={`Rate ${n} stars`}
                       className="p-0.5 transition-transform hover:scale-110 active:scale-95 motion-reduce:transform-none"
                     >
-                      <Star size={20} className={n <= shownStars ? "fill-accent text-accent" : "text-ink-subtle"} />
+                      <Star
+                        size={20}
+                        className={n <= shownStars ? "fill-accent text-accent" : "text-ink-subtle"}
+                      />
                     </button>
                   ))}
                 </div>
@@ -147,8 +168,9 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
               <div className="flex items-start gap-2.5 rounded-md bg-surface px-3.5 py-3 text-[12.5px] leading-relaxed text-ink-muted ring-1 ring-edge-soft">
                 <RefreshCw size={16} className="mt-0.5 shrink-0 text-ink-subtle" />
                 <span>
-                  <span className="font-semibold text-ink">Update queued.</span> The author submitted a new version
-                  that's in review. You're seeing the current published version until it's approved.
+                  <span className="font-semibold text-ink">Update queued.</span> The author
+                  submitted a new version that's in review. You're seeing the current published
+                  version until it's approved.
                 </span>
               </div>
             )}
@@ -156,7 +178,13 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
             {t.screenshots.length > 0 && (
               <div className="flex flex-col gap-2.5">
                 {t.screenshots.map((s, i) => (
-                  <img key={i} src={s} alt="" loading="lazy" className="w-full rounded-md ring-1 ring-edge-soft" />
+                  <img
+                    key={i}
+                    src={s}
+                    alt=""
+                    loading="lazy"
+                    className="w-full rounded-md ring-1 ring-edge-soft"
+                  />
                 ))}
               </div>
             )}

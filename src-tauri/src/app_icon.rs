@@ -44,27 +44,36 @@ fn set_macos_dock_icon(image_bytes: Option<Vec<u8>>) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn set_app_icon(app: tauri::AppHandle, image_bytes: Option<Vec<u8>>) -> Result<(), String> {
+pub async fn set_app_icon(
+    app: tauri::AppHandle,
+    image_bytes: Option<Vec<u8>>,
+) -> Result<(), String> {
     #[cfg(target_os = "macos")]
     {
+        let (tx, rx) = tokio::sync::oneshot::channel();
         app.run_on_main_thread(move || {
-            if let Err(e) = set_macos_dock_icon(image_bytes) {
-                eprintln!("[harbor::app_icon] failed to set dock icon: {e}");
-            }
+            let _ = tx.send(set_macos_dock_icon(image_bytes));
         })
         .map_err(|e| format!("run_on_main_thread failed: {e}"))?;
+        rx.await
+            .map_err(|e| format!("app icon result channel closed: {e}"))?
     }
     #[cfg(not(target_os = "macos"))]
     {
-        if let Some(window) = app.get_webview_window("main") {
-            if let Some(bytes) = image_bytes {
-                if let Ok(icon) = tauri::image::Image::from_bytes(&bytes) {
-                    let _ = window.set_icon(icon);
-                }
-            } else if let Some(default_icon) = app.default_window_icon().cloned() {
-                let _ = window.set_icon(default_icon);
-            }
-        }
+        let window = app
+            .get_webview_window("main")
+            .ok_or_else(|| "main window is unavailable".to_string())?;
+        let icon = if let Some(bytes) = image_bytes {
+            tauri::image::Image::from_bytes(&bytes)
+                .map_err(|e| format!("failed to decode app icon: {e}"))?
+        } else {
+            app.default_window_icon()
+                .cloned()
+                .ok_or_else(|| "default app icon is unavailable".to_string())?
+        };
+        window
+            .set_icon(icon)
+            .map_err(|e| format!("failed to set app icon: {e}"))?;
+        Ok(())
     }
-    Ok(())
 }

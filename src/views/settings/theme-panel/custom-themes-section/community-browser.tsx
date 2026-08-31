@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { AlertCircle, Check, Download, Loader2, Star, Upload } from "lucide-react";
 import { Search } from "@/components/icons/search-icon";
 import { browseThemes, downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
-import { UserHoverCard } from "@/views/profile/user-hover-card";
 import { CommunityDetail } from "./community-detail";
+import { ThemeAuthorButton } from "./theme-author-button";
 import { ThemeUploadFlow } from "./theme-upload-flow";
 
 const SORTS = [
@@ -48,7 +48,9 @@ export function CommunityPane() {
             key={s.id}
             onClick={() => setSort(s.id)}
             className={`h-8 rounded-full border px-3.5 text-[12.5px] font-semibold transition-colors ${
-              sort === s.id ? "border-ink bg-ink text-canvas" : "border-edge-soft bg-elevated text-ink-muted hover:border-edge hover:text-ink"
+              sort === s.id
+                ? "border-ink bg-ink text-canvas"
+                : "border-edge-soft bg-elevated text-ink-muted hover:border-edge hover:text-ink"
             }`}
           >
             {s.label}
@@ -60,7 +62,7 @@ export function CommunityPane() {
         >
           <Upload size={14} strokeWidth={2.2} /> Share a theme
         </button>
- <div className="flex h-9 items-center gap-2 rounded-full bg-elevated px-3.5">
+        <div className="flex h-9 items-center gap-2 rounded-full bg-elevated px-3.5">
           <Search size={16} className="text-ink-subtle" />
           <input
             value={query}
@@ -76,10 +78,14 @@ export function CommunityPane() {
           <Loader2 size={20} className="animate-spin" />
         </div>
       ) : error ? (
-        <div className="rounded-md border border-danger bg-danger/15 px-4 py-8 text-center text-[13px] text-danger">{error}</div>
+        <div className="rounded-md border border-danger bg-danger/15 px-4 py-8 text-center text-[13px] text-danger">
+          {error}
+        </div>
       ) : themes.length === 0 ? (
         <p className="rounded-md border border-dashed border-edge px-4 py-12 text-center text-[13px] text-ink-subtle">
-          {debounced ? "No themes match your search." : "No community themes yet. Be the first to share one."}
+          {debounced
+            ? "No themes match your search."
+            : "No community themes yet. Be the first to share one."}
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -129,14 +135,14 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
   const shownRating = myRating || Math.round(t.ratingAvg);
 
   return (
-    <div
-      onClick={onOpen}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onOpen()}
- className="group flex cursor-pointer flex-col overflow-hidden rounded-md bg-surface text-start transition hover:bg-elevated hover:harbor-float"
-    >
-      <div className="relative h-36 w-full overflow-hidden bg-elevated">
+    <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-md bg-surface text-start transition hover:bg-elevated hover:harbor-float">
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`Open ${t.name} details`}
+        className="absolute inset-0 z-0 rounded-md focus-visible:ring-2 focus-visible:ring-accent"
+      />
+      <div className="pointer-events-none relative z-10 h-36 w-full overflow-hidden bg-elevated">
         {t.cover ? (
           <img
             src={t.cover}
@@ -155,17 +161,29 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
           <Star size={12} className="fill-amber-300 text-accent" /> {t.ratingAvg || "-"}
         </div>
         <div className="absolute inset-0 flex flex-col justify-end gap-2 bg-gradient-to-t from-black/85 via-black/35 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-          <div className="flex items-center justify-center gap-0.5" role="group" aria-label="Rate this theme">
+          <div
+            className="pointer-events-auto flex items-center justify-center gap-0.5"
+            role="group"
+            aria-label="Rate this theme"
+          >
             {[1, 2, 3, 4, 5].map((n) => (
-              <button key={n} onClick={(e) => rate(e, n)} aria-label={`Rate ${n} stars`} className="p-0.5">
-                <Star size={16} className={n <= shownRating ? "fill-amber-300 text-accent" : "text-white/60"} />
+              <button
+                key={n}
+                onClick={(e) => rate(e, n)}
+                aria-label={`Rate ${n} stars`}
+                className="p-0.5"
+              >
+                <Star
+                  size={16}
+                  className={n <= shownRating ? "fill-amber-300 text-accent" : "text-white/60"}
+                />
               </button>
             ))}
           </div>
           <button
             onClick={download}
             disabled={state === "loading"}
-            className={`flex h-9 items-center justify-center gap-1.5 rounded-md text-[12.5px] font-semibold transition-colors disabled:opacity-80 ${
+            className={`pointer-events-auto flex h-9 items-center justify-center gap-1.5 rounded-md text-[12.5px] font-semibold transition-colors disabled:opacity-80 ${
               state === "done"
                 ? "bg-success text-black"
                 : state === "error"
@@ -182,7 +200,13 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
             ) : (
               <Download size={14} />
             )}
-            {state === "done" ? "Added to library" : state === "error" ? "Failed" : state === "loading" ? "Downloading" : "Download"}
+            {state === "done"
+              ? "Added to library"
+              : state === "error"
+                ? "Failed"
+                : state === "loading"
+                  ? "Downloading"
+                  : "Download"}
           </button>
         </div>
         <div className="absolute bottom-0 left-0 right-0 flex h-1.5">
@@ -191,15 +215,11 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
           ))}
         </div>
       </div>
-      <div className="flex min-w-0 flex-col px-4 py-3">
+      <div className="pointer-events-none relative z-10 flex min-w-0 flex-col px-4 py-3">
         <span className="truncate text-[14.5px] font-semibold text-ink">{t.name}</span>
         <span className="truncate text-[11.5px] text-ink-subtle">
           {t.authorHandle ? (
-            <UserHoverCard handle={t.authorHandle}>
-              <span className="transition-colors hover:text-ink" onClick={(e) => e.stopPropagation()}>
-                {t.author}
-              </span>
-            </UserHoverCard>
+            <ThemeAuthorButton handle={t.authorHandle} name={t.author || "Anonymous"} />
           ) : (
             t.author
           )}{" "}
