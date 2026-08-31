@@ -12,6 +12,7 @@ export type KeyEntry = {
   desc: string;
   value: string;
   logo?: string;
+  mark?: ReactNode;
   badge?: string;
   guide?: ReactNode;
   field: ReactNode;
@@ -23,7 +24,9 @@ export function ProviderKeyRow({ entry, onOpen }: { entry: KeyEntry; onOpen: () 
   return (
     <SettingRow
       icon={
-        entry.logo ? (
+        entry.mark ? (
+          entry.mark
+        ) : entry.logo ? (
           <img
             src={entry.logo}
             alt=""

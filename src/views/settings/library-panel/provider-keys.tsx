@@ -15,6 +15,7 @@ import { ModalButton, SettingsModal } from "../kit";
 import { TmdbGuideModal } from "../tmdb-tutorial-modal";
 import { TvdbGuideModal } from "../tvdb-tutorial-modal";
 import { ProviderKeyRow, type KeyEntry, type KeyId } from "./provider-key-row";
+import { PosterServiceMark } from "./poster-mark";
 import type { LibraryKey } from "../library-panel";
 
 export type ProviderKeysArgs = {
@@ -256,7 +257,7 @@ export function useProviderKeys({
       name: t("Custom poster service"),
       desc: t("Swap in Better Posters, PostersPlus, or your own URL template."),
       value: posterSrvDraft,
-      logo: rpdbLogo,
+      mark: <PosterServiceMark />,
       field: (
         <KeyField
           label={t("Custom poster service")}
@@ -268,7 +269,7 @@ export function useProviderKeys({
             flashExtra("postersrv");
           }}
           saved={extraSaved === "postersrv"}
-          iconSrc={rpdbLogo}
+          iconNode={<PosterServiceMark />}
           help={
             <>
               Leave empty to use your RPDB key above. Or paste <strong>Better Posters</strong> (

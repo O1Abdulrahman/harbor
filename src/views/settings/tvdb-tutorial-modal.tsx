@@ -107,12 +107,14 @@ export function TvdbGuideModal({ open, onClose }: { open: boolean; onClose: () =
                     </p>
                   </div>
                 )}
-                <img
-                  src={step.img}
-                  alt=""
-                  loading="lazy"
-                  className="mt-1.5 max-h-[128px] max-w-full rounded-md"
-                />
+                <div className="mt-2 overflow-hidden rounded-lg bg-canvas ring-1 ring-inset ring-edge-soft">
+                  <img
+                    src={step.img}
+                    alt=""
+                    loading="lazy"
+                    className="block max-h-[240px] w-full object-contain"
+                  />
+                </div>
               </div>
             </div>
           ))}

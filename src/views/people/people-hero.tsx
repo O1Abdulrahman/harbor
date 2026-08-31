@@ -82,7 +82,7 @@ export function PeopleHero({
               type="button"
               onClick={() => onOpenPerson(person.id)}
               aria-label={t("View {name}", { name: person.name })}
-              className="relative h-[188px] w-[128px] shrink-0 overflow-hidden rounded-2xl bg-elevated/60 shadow-[0_26px_50px_-16px_rgba(0,0,0,0.6)] ring-1 ring-edge-soft no-press transition-[scale,box-shadow] duration-250 ease-out motion-safe:hover:scale-[1.02] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="relative h-[188px] w-[128px] shrink-0 overflow-hidden rounded-lg bg-elevated/60 shadow-[0_26px_50px_-16px_rgba(0,0,0,0.6)] ring-1 ring-edge-soft no-press transition-[scale,box-shadow] duration-250 ease-out motion-safe:hover:scale-[1.02] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               {face ? (
                 <img

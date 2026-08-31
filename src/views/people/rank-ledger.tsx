@@ -300,7 +300,7 @@ function ProofRow({
             )}
           </span>
           <span className="flex items-center gap-2 text-[11px] text-ink-subtle">
-            <span className="rounded-full bg-elevated/60 px-1.5 py-0.5 text-[10px] text-ink-muted ring-1 ring-edge-soft">
+            <span className="rounded-full bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-ink-muted">
               {t(title.role)}
             </span>
             {title.rating !== null && (

@@ -14,6 +14,7 @@ import "@/lib/awards-history-eager";
 import "@/lib/i18n/i18n-eager";
 import "@/index.css";
 import "flag-icons/css/flag-icons.min.css";
+import { startTaskbarProgress } from "@/lib/download/taskbar-progress";
 
 function detectRemoteMode(): boolean {
   try {
@@ -129,6 +130,7 @@ function MainRoot() {
 async function mount() {
   await Promise.all([loadSecrets(), hydrateCustomThemes().catch(() => {})]);
   if (!isHdrOverlay && !isModal && !isCaptions) void initSubtitleCache();
+  if (!isHdrOverlay && !isModal && !isCaptions && !isPip) startTaskbarProgress();
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       {isHdrOverlay ? (
