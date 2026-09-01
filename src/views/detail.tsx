@@ -1229,6 +1229,17 @@ export function DetailView({
     prefetchSegments(playMeta, targetEp);
   }, [loading, isSeries, isAnime, lastPlay, animeEpisodes, cinemetaFull?.videos, playMeta]);
 
+  const episodeName = useCallback(
+    (season: number, episode: number): string | undefined => {
+      const videos = playMeta.videos ?? cinemetaFull?.videos;
+      const match = videos?.find(
+        (v) => (v.season ?? 1) === season && (v.episode ?? v.number) === episode,
+      );
+      return match?.name || match?.title || undefined;
+    },
+    [playMeta.videos, cinemetaFull?.videos],
+  );
+
   const smartPlay = useCallback(
     async (forcePicker = false) => {
       if (inSession) claimHost(true);
@@ -1338,7 +1349,11 @@ export function DetailView({
         return;
       }
       if (lastPlay) {
-        await launch({ season: lastPlay.season, episode: lastPlay.episode });
+        await launch({
+          season: lastPlay.season,
+          episode: lastPlay.episode,
+          name: episodeName(lastPlay.season, lastPlay.episode),
+        });
         return;
       }
       if (authKey) {
@@ -1361,14 +1376,14 @@ export function DetailView({
               season >= 1 &&
               episode >= 1
             ) {
-              await launch({ season, episode });
+              await launch({ season, episode, name: episodeName(season, episode) });
               return;
             }
           }
           if (item) break;
         }
       }
-      await launch({ season: 1, episode: 1 });
+      await launch({ season: 1, episode: 1, name: episodeName(1, 1) });
     },
     [
       isSeries,
@@ -1388,6 +1403,7 @@ export function DetailView({
       authKey,
       meta.id,
       detail?.imdbId,
+      episodeName,
     ],
   );
   const smartPlayLabel =
