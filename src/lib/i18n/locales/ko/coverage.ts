@@ -641,6 +641,29 @@ const coverage: Record<string, string> = {
     "커뮤니티 자막 소스입니다. Subsource API 키를 추가하기 전까지 꺼져 있습니다.",
   "A compact upright slider that boosts past 100 percent.":
     "100%를 넘어 증폭할 수 있는 세로형 콤팩트 슬라이더입니다.",
+  "Direct/debrid": "직접/debrid",
+  "Audio verified": "오디오로 확인됨",
+  "Watchlist overlaps ({n})": "관심 목록 중복 ({n})",
+  "Favorites overlap ({n})": "즐겨찾기 중복 ({n})",
+  "Addons overlap ({n})": "애드온 중복 ({n})",
+  "Import selected data?": "선택한 데이터를 가져올까요?",
+  "Show direct, debrid, and peer-to-peer sources": "직접, debrid 및 P2P 소스 표시",
+  "Prefer direct and debrid sources; keep P2P when only web links are available":
+    "직접 및 debrid 소스를 우선하고 웹 링크만 있을 때는 P2P 유지",
+  "Prefer peer-to-peer torrent sources": "P2P 토렌트 소스 우선",
+  "Hearing impaired": "청각 장애인용",
+  "Foreign-only": "외국어 구간만",
+  "Machine-translated": "기계 번역",
+  "Direct/debrid only": "직접/debrid만",
+  "Match subtitles across languages (experimental)": "서로 다른 언어의 자막 맞추기(실험적)",
+  "When the audio and subtitle use different languages, Harbor compares a release-matched subtitle in the audio language. It only offers a fix unless every safety check is measured.":
+    "오디오와 자막의 언어가 다르면 Harbor는 같은 릴리스에 맞는 오디오 언어 자막과 비교합니다. 모든 안전 검사가 측정되지 않으면 수정안을 제안만 합니다.",
+  "New York Times": "New York Times",
+  "Bestseller lists in the eBook section.": "eBook 섹션의 베스트셀러 목록입니다.",
+  "New York Times · bestseller lists": "New York Times · 베스트셀러 목록",
+  "NYT Books API key": "NYT Books API 키",
+  "Choose whether Harbor prefers direct and debrid sources, peer-to-peer torrents, or shows both.":
+    "Harbor가 직접 및 debrid 소스, P2P 토렌트를 우선할지 또는 둘 다 표시할지 선택합니다.",
 };
 
 export default coverage;

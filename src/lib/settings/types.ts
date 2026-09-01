@@ -339,6 +339,7 @@ export type Settings = {
   autoSyncApplyStructural: boolean;
   autoSyncDrift: boolean;
   subtitleAutoSyncAsr: boolean;
+  subtitleAutoSyncPivot: boolean;
   subtitleAutoSyncCrowd: boolean;
   communitySyncUrl: string;
   communitySyncOptOut: boolean;

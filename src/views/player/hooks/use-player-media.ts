@@ -144,17 +144,30 @@ export function usePlayerMedia(params: {
     volumeRestoredRef.current = true;
   }, [bridgeReady, bridgeKey, snap.status]);
 
-  const { resolvedImdbId, resolvedImdbVerified, resolutionSettled, subtitleSearchActive } =
-    useTrackAutoload({
-      bridgeRef,
-      src,
-      snap,
-      engine,
-      settings,
-      authKey,
-    });
+  const {
+    resolvedImdbId,
+    resolvedImdbVerified,
+    resolutionSettled,
+    subtitleSearchActive,
+    subtitlePreflightSettled,
+  } = useTrackAutoload({
+    bridgeRef,
+    src,
+    snap,
+    engine,
+    settings,
+    authKey,
+  });
 
-  const autoSync = useAutoSync({ bridgeRef, src, snap, engine, settings });
+  const autoSync = useAutoSync({
+    bridgeRef,
+    src,
+    snap,
+    engine,
+    settings,
+    authKey,
+    subtitlePreflightSettled,
+  });
   const {
     status: asStatus,
     offer: asOffer,

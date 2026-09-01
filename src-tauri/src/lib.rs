@@ -23,6 +23,7 @@ mod settings_store;
 mod stream_proxy;
 mod streams;
 mod stremio_auth;
+mod subtitle_credentials;
 mod temp_prune;
 mod torrent_engine;
 mod transcode;
@@ -831,6 +832,7 @@ pub fn run() {
             subsync::moviehash::compute_moviehash,
             subsync::sync_subtitle,
             subsync::scorer::subsync_score_transform,
+            subsync::scorer::subsync_preflight_candidates,
             subsync::torrent_sync::torrent_sync_availability,
             subsync::torrent_sync::torrent_sync_subtitle,
             subsync::torrent_sync::torrent_score_transform,
@@ -948,6 +950,8 @@ pub fn run() {
             multiview::multiview_stop_all,
             http_fetch::harbor_fetch,
             http_fetch::harbor_upload,
+            subtitle_credentials::subtitle_credential_bind,
+            subtitle_credentials::subtitle_credentials_clear,
             cf_solver::cf_report,
             discord_rp::discord_set_presence,
             discord_rp::discord_clear,

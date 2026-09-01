@@ -129,7 +129,7 @@ test("an enriched addon timeout still falls back to the standard subtitle endpoi
 });
 
 test("automatic subtitle loading limits each preferred language independently", () => {
-  assert.match(fetchIntoPlayer, /const EXTRA_TRACKS_PER_LANGUAGE = 6/);
+  assert.match(fetchIntoPlayer, /const EXTRA_TRACKS_PER_LANGUAGE = 15/);
   assert.match(fetchIntoPlayer, /spreadBySourcePerLanguage\(/);
   assert.match(
     fetchIntoPlayer,

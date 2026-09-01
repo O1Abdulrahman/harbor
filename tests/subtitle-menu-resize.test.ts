@@ -14,6 +14,10 @@ const resizablePanel = readFileSync(
   new URL("../src/components/player/subtitle-menu/resizable-panel.tsx", import.meta.url),
   "utf8",
 );
+const menuHeader = readFileSync(
+  new URL("../src/components/player/subtitle-menu/menu-header.tsx", import.meta.url),
+  "utf8",
+);
 
 test("subtitle panel keeps its normal size when the viewport has enough room", () => {
   assert.deepEqual(
@@ -45,4 +49,8 @@ test("the caller positioning stays separate from the panel's relative surface", 
   assert.match(resizablePanel, /className=\{className\}/);
   assert.match(resizablePanel, /<div className="relative flex h-full w-full/);
   assert.doesNotMatch(resizablePanel, /className=\{`relative[^`]*\$\{className\}`\}/);
+});
+
+test("the subtitle header reserves space for the top-left resize handle", () => {
+  assert.match(menuHeader, /pe-4 ps-10 py-2\.5/);
 });

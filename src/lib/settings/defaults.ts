@@ -286,6 +286,7 @@ export const DEFAULT: Settings = {
   autoSyncApplyStructural: false,
   autoSyncDrift: false,
   subtitleAutoSyncAsr: true,
+  subtitleAutoSyncPivot: false,
   subtitleAutoSyncCrowd: true,
   communitySyncUrl: "",
   communitySyncOptOut: false,
