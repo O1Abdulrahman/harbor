@@ -7,10 +7,10 @@
         {
           "heading": "Installer and updates",
           "items": [
-            "Added Harbor's new Windows installer and updater handoff, with a verified embedded app payload, per-user installation, automatic relaunch, and an installation marker for future updates — Harbor Team",
-            "Kept the existing NSIS updater path available so installations made with older Harbor installers continue receiving updates — Harbor Team",
-            "Added a dedicated Harbor uninstaller and a localized installer experience in English, Arabic, Portuguese, and Russian — Harbor Team",
-            "Added release safeguards that reject missing, oversized, stale, or mismatched installer payloads before a manifest entry can be generated — Harbor Team"
+            "Added Harbor's new Windows installer and updater handoff, with a verified embedded app payload, per-user installation, automatic relaunch, and an installation marker for future updates — J",
+            "Kept the existing NSIS updater path available so installations made with older Harbor installers continue receiving updates — J",
+            "Added a dedicated Harbor uninstaller and a localized installer experience in English, Arabic, Portuguese, and Russian — J",
+            "Added release safeguards that reject missing, oversized, stale, or mismatched installer payloads before a manifest entry can be generated — J"
           ]
         },
         {
@@ -22,7 +22,7 @@
             "Added local EPUB and folder support, Harbor eBook plugins, source matching, chapter caching, offline export, and Downloads integration — @capex122",
             "Added opt-in DeepSeek chapter translation with cached translations and original-text restoration — @capex122",
             "Added Edge TTS narration with language-grouped voices, samples, generation progress, cancellation, seeking, and synchronized line tracking — @capex122",
-            "Added optional New York Times bestseller lists to the eBook home when an NYT Books API key is configured — Harbor Team"
+            "Added optional New York Times bestseller lists to the eBook home when an NYT Books API key is configured — J"
           ]
         },
         {
@@ -58,7 +58,7 @@
             "Source mode now consistently supports Both, Direct/debrid, and P2P preferences across the picker, player switcher, filters, and Big Picture — @Talal1011",
             "Downloaded local files now show as fully Cached immediately instead of displaying a growing network-buffer bar — @uddx7",
             "Improved native trailer playback by preferring progressive files at lower qualities, retrying adaptive video/audio merges, and finding bundled ffmpeg on Intel and Apple Silicon Macs — @pengunnn",
-            "Normalized parsed audio channel counts and bit depth when addon metadata supplies arrays, strings, or malformed values — Harbor Team",
+            "Normalized parsed audio channel counts and bit depth when addon metadata supplies arrays, strings, or malformed values — J",
             "Returned content advisory to Harbor's restrained player design while retaining the current guidance, settings, and reliability fixes — @Talal1011 and @O1Abdulrahman"
           ]
         },
@@ -78,13 +78,13 @@
             "Theme creator names are clickable and keyboard-accessible across Community Store surfaces, open the current creator profile, and no longer trigger the theme card underneath — @uddx7",
             "Added behavior-based Community Store theme filters with viewport-aware, scrollable menus — @pengunnn",
             "Friend presence now stays consistent between the friends panel and profile hover card — @pengunnn",
-            "Added the Kawaii beta theme and refined its profile picker, hero artwork fallback, and navigation presentation — Harbor Team",
+            "Added the Kawaii beta theme and refined its profile picker, hero artwork fallback, and navigation presentation — J",
             "Calendar items now show local release times and live countdowns, with an optional larger-poster layout and sharper portrait artwork — @uddx7",
             "Fixed the macOS window opening beneath the menu bar, camera notch, or Dock by fitting it to the visible screen area — @3-pr",
             "Custom theme app icons now update the Harbor icon shown in the macOS Dock — @3-pr",
             "Fixed Home hero actions remaining unresponsive after a drag and fixed the right-click Add to my list submenu being clipped — @uddx7",
-            "Expanded controller navigation, glyphs, cursor behavior, device presentation, and player-control handling — Harbor Team",
-            "Refined Live TV guide navigation, EPG matching, lazy rendering, program presentation, and drag panning — Harbor Team"
+            "Expanded controller navigation, glyphs, cursor behavior, device presentation, and player-control handling — J",
+            "Refined Live TV guide navigation, EPG matching, lazy rendering, program presentation, and drag panning — J"
           ]
         },
         {
