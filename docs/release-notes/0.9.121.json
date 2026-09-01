@@ -54,6 +54,9 @@
         {
           "heading": "Playback and source reliability",
           "items": [
+            "Holding the primary left mouse button over a playing video now temporarily uses 2× speed, restores the previous rate on release, and does not accidentally pause playback — @theabdull5h",
+            "Harbor TMDB search results now query both bare and type-scoped TMDB IDs so compatible stream and metadata addons return their sources — @Thunderhawkk",
+            "The player now starts from the saved volume and mute preference instead of briefly exposing the default volume before the playback engine responds — @Thunderhawkk",
             "Fixed direct HTTPS addon links being mistaken for playable direct streams and hiding P2P results while source mode was set to Addons — @Talal1011",
             "Source mode now consistently supports Both, Direct/debrid, and P2P preferences across the picker, player switcher, filters, and Big Picture — @Talal1011",
             "Downloaded local files now show as fully Cached immediately instead of displaying a growing network-buffer bar — @uddx7",
