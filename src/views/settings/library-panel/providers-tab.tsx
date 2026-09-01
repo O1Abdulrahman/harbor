@@ -36,6 +36,7 @@ export function ProvidersTab(props: ProviderKeysArgs) {
           {keyRow("fanart")}
           {keyRow("rpdb")}
           {keyRow("postersrv")}
+          {keyRow("nyt")}
         </SettingGroup>
       </Section>
 

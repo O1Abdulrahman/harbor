@@ -7,6 +7,7 @@ import type { CustomStreamFilter } from "@/lib/streams/custom-filters";
 import type { SyncIndicatorPosition } from "@/lib/sync-toast-position";
 import type { FullscreenClockFormat, FullscreenClockStyle } from "@/lib/local-time";
 import type { SubtitleOffsetPosition, SubtitleOffsetSize } from "@/lib/player/subtitle-offset";
+import type { UiLanguage } from "@/lib/i18n/languages";
 
 export type StreamingService =
   | "netflix"
@@ -362,6 +363,8 @@ export type Settings = {
   showLocalLibraryBadge: boolean;
   showWatchedBadge: boolean;
   localPlaybackMode: "ask" | "local" | "stream";
+  playbackSourcePreference: "ask" | "local" | "online" | "home-server";
+  preferredMediaServerId: string | null;
   localMinFileSizeMb: number;
   catalogsPinned: string[];
   catalogsHidden: string[];
@@ -617,6 +620,7 @@ export type Settings = {
   downloadCreateFolders: boolean;
   ebookDownloadDir: string;
   ebookDownloadCreateFolders: boolean;
+  nytKey: string;
   stremioDeeplinkInstall: boolean;
   iptvPlaylists: Array<{
     id: string;
@@ -639,7 +643,7 @@ export type Settings = {
   libraryHero: boolean;
   mangaEnabled: boolean;
   feedLocaleBias: boolean;
-  uiLanguage: "en" | "ar" | "pt" | "ru";
+  uiLanguage: UiLanguage;
   arabicWelcomeSeen: boolean;
   cropMode: string;
   customLists: CustomList[];

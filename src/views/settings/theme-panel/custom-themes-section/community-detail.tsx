@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useEscape, useModalExit } from "@/components/modal-shell";
 import { createPortal } from "react-dom";
 import { Check, Download, Loader2, Share2, Star, X } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
 import { subscribeOpenProfile } from "@/lib/social/open-profile";
 import { ThemeAuthorButton } from "./theme-author-button";
 
 export function CommunityDetail({ theme, onClose }: { theme: StoreTheme; onClose: () => void }) {
+  const tr = useT();
   const { closing, close } = useModalExit(onClose);
   useEscape(close);
   useEffect(() => subscribeOpenProfile(close), [close]);
@@ -50,13 +52,18 @@ export function CommunityDetail({ theme, onClose }: { theme: StoreTheme; onClose
   };
 
   const shownRating = myRating || Math.round(t.ratingAvg);
+  const authorName = t.author || tr("Anonymous");
+  const authorMarker = "\uFFFC";
+  const [authorPrefix, authorSuffix = ""] = tr("by {author}", {
+    author: authorMarker,
+  }).split(authorMarker);
 
   return createPortal(
     <div
       className={`${closing ? "animate-scrim-out" : "animate-scrim-in"} fixed inset-0 z-[244] flex items-center justify-center p-6`}
     >
       <button
-        aria-label="Close"
+        aria-label={tr("Close")}
         onClick={close}
         className="absolute inset-0 cursor-default bg-canvas/70 backdrop-blur-sm"
       />
@@ -64,7 +71,7 @@ export function CommunityDetail({ theme, onClose }: { theme: StoreTheme; onClose
         className={`modal-panel ${closing ? "animate-dialog-out" : "animate-dialog-in"} relative flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-md bg-elevated harbor-float`}
       >
         <button
-          aria-label="Close"
+          aria-label={tr("Close")}
           onClick={close}
           className="absolute end-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-canvas/80 text-ink-muted backdrop-blur-md transition-colors hover:text-ink"
         >
@@ -83,13 +90,20 @@ export function CommunityDetail({ theme, onClose }: { theme: StoreTheme; onClose
                 {t.name}
               </h2>
               <p className="text-[13px] text-ink-subtle">
-                by{" "}
                 {t.authorHandle ? (
-                  <ThemeAuthorButton handle={t.authorHandle} name={t.author || "Anonymous"} />
+                  <>
+                    {authorPrefix}
+                    <ThemeAuthorButton handle={t.authorHandle} name={authorName} />
+                    {authorSuffix}
+                  </>
                 ) : (
-                  t.author
+                  tr("by {author}", { author: authorName })
                 )}{" "}
-                · {t.downloads} downloads · {t.ratingAvg || "-"}/5 ({t.ratingCount})
+                ·{" "}
+                {t.downloads === 1
+                  ? tr("1 download")
+                  : tr("{count} downloads", { count: t.downloads })}{" "}
+                · {tr("{rating}/5 ({count})", { rating: t.ratingAvg || "-", count: t.ratingCount })}
               </p>
             </div>
             {t.blurb && <p className="text-[13.5px] leading-relaxed text-ink-muted">{t.blurb}</p>}
@@ -109,24 +123,25 @@ export function CommunityDetail({ theme, onClose }: { theme: StoreTheme; onClose
                 ) : (
                   <Download size={16} />
                 )}
-                {done ? "Added to library" : downloading ? "Downloading…" : "Download"}
+                {done ? tr("Added to library") : downloading ? tr("Downloading…") : tr("Download")}
               </button>
               <button
                 onClick={share}
                 className="flex h-11 items-center gap-2 rounded-md px-4 text-[13.5px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
               >
-                {copied ? <Check size={16} /> : <Share2 size={16} />} {copied ? "Copied" : "Share"}
+                {copied ? <Check size={16} /> : <Share2 size={16} />}{" "}
+                {copied ? tr("Copied") : tr("Share")}
               </button>
               <div
                 className="ms-auto flex items-center gap-0.5"
                 role="group"
-                aria-label="Rate this theme"
+                aria-label={tr("Rate this theme")}
               >
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button
                     key={n}
                     onClick={() => rate(n)}
-                    aria-label={`Rate ${n} stars`}
+                    aria-label={tr("Rate {count} stars", { count: n })}
                     className="p-0.5"
                   >
                     <Star

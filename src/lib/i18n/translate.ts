@@ -1,16 +1,14 @@
+import { useSyncExternalStore } from "react";
 import en from "./locales/en";
 import { getUiLanguage, useUiLanguage } from "./store";
 import { isRtl, LANGUAGES, type UiLanguage } from "./languages";
 
 type Vars = Record<string, string | number>;
 
-// Only English is wired in here. Arabic, Portuguese and Russian are 1.97MB of
-// the television's 2.95MB render-blocking chunk, 66.7% of it, and a stick
-// showing English pays all of it and reads none of it. Worse than the parse:
-// each locale barrel spreads about 27 sub-objects into one 8,000-property
-// object, so 22,765 properties are materialised and copied again before React
-// exists. Desktop keeps its exact old timing by importing i18n-eager before it
-// mounts; television loads only the language actually selected.
+// Only English is wired in here. Translated catalogs are large data chunks,
+// so both desktop and television load only the selected locale before mount.
+// Runtime language changes use the same loader and notify this module again
+// when the local chunk is registered.
 const catalogs: Partial<Record<UiLanguage, Record<string, string>>> = { en };
 
 let version = 0;
@@ -42,7 +40,38 @@ export type PluralForm = "one" | "few" | "many";
 const VARIANT_SEP = "#";
 const VARIANT_SUFFIX = /#(?:one|few|many)$/;
 
+const oneForOne = (n: number): PluralForm =>
+  Number.isInteger(n) && Math.abs(n) === 1 ? "one" : "many";
+const oneForZeroOrOne = (n: number): PluralForm =>
+  Number.isInteger(n) && Math.abs(n) <= 1 ? "one" : "many";
+const pluralInvariant = (): PluralForm => "many";
+
 const PLURAL_RULES: Partial<Record<UiLanguage, (n: number) => PluralForm>> = {
+  ar: (n) => {
+    if (!Number.isInteger(n)) return "many";
+    const abs = Math.abs(n);
+    if (abs === 1) return "one";
+    const mod100 = abs % 100;
+    return mod100 >= 2 && mod100 <= 10 ? "few" : "many";
+  },
+  de: oneForOne,
+  es: oneForOne,
+  fr: oneForZeroOrOne,
+  hi: oneForZeroOrOne,
+  id: pluralInvariant,
+  it: oneForOne,
+  ja: pluralInvariant,
+  ko: pluralInvariant,
+  pl: (n) => {
+    if (!Number.isInteger(n)) return "many";
+    const abs = Math.abs(n);
+    if (abs === 1) return "one";
+    const mod10 = abs % 10;
+    const mod100 = abs % 100;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "few";
+    return "many";
+  },
+  pt: oneForZeroOrOne,
   ru: (n) => {
     if (!Number.isInteger(n)) return "many";
     const abs = Math.abs(n);
@@ -52,6 +81,9 @@ const PLURAL_RULES: Partial<Record<UiLanguage, (n: number) => PluralForm>> = {
     if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "few";
     return "many";
   },
+  tr: pluralInvariant,
+  vi: pluralInvariant,
+  zh: pluralInvariant,
 };
 
 export function pluralForm(lang: UiLanguage, n: number): PluralForm | null {
@@ -67,9 +99,7 @@ function countFor(key: string, vars?: Vars): number | null {
   return null;
 }
 
-// Built per language on first use, never for every language at import time.
-// Eagerly it walked all 22,765 non-English entries during boot to serve a
-// function that most sessions never call.
+// Built for the active language on first use instead of walking every catalog.
 const reverseCache = new Map<UiLanguage, Map<string, string>>();
 
 function reverseFor(lang: UiLanguage): Map<string, string> {
@@ -122,6 +152,7 @@ export function sourceTranslationKey(value: string): string {
 
 export function useT(): (key: string, vars?: Vars) => string {
   const lang = useUiLanguage();
+  useSyncExternalStore(subscribeUiCatalog, uiCatalogVersion, uiCatalogVersion);
   return (key: string, vars?: Vars) => interpolate(resolve(lang, key, vars), vars);
 }
 

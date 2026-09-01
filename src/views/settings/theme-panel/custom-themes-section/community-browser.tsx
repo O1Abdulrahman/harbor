@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AlertCircle, Check, Download, Loader2, Star, Upload } from "lucide-react";
 import { Search } from "@/components/icons/search-icon";
 import { browseThemes, downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
+import { useT } from "@/lib/i18n";
 import { CommunityDetail } from "./community-detail";
 import { ThemeAuthorButton } from "./theme-author-button";
 import { ThemeUploadFlow } from "./theme-upload-flow";
@@ -13,6 +14,7 @@ const SORTS = [
 ];
 
 export function CommunityPane() {
+  const t = useT();
   const [sort, setSort] = useState("top");
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
@@ -23,8 +25,8 @@ export function CommunityPane() {
   const [uploadOpen, setUploadOpen] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setDebounced(query.trim()), 300);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setDebounced(query.trim()), 300);
+    return () => clearTimeout(timer);
   }, [query]);
 
   useEffect(() => {
@@ -53,21 +55,22 @@ export function CommunityPane() {
                 : "border-edge-soft bg-elevated text-ink-muted hover:border-edge hover:text-ink"
             }`}
           >
-            {s.label}
+            {t(s.label)}
           </button>
         ))}
         <button
           onClick={() => setUploadOpen(true)}
           className="ms-auto flex h-9 items-center gap-1.5 rounded-full bg-ink px-4 text-[12.5px] font-semibold text-canvas transition-opacity hover:opacity-90"
         >
-          <Upload size={14} strokeWidth={2.2} /> Share a theme
+          <Upload size={14} strokeWidth={2.2} /> {t("Share a theme")}
         </button>
         <div className="flex h-9 items-center gap-2 rounded-full bg-elevated px-3.5">
           <Search size={16} className="text-ink-subtle" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search themes"
+            placeholder={t("Search themes")}
+            aria-label={t("Search themes")}
             className="w-44 bg-transparent text-[13px] text-ink placeholder:text-ink-subtle focus:outline-none"
           />
         </div>
@@ -84,8 +87,8 @@ export function CommunityPane() {
       ) : themes.length === 0 ? (
         <p className="rounded-md border border-dashed border-edge px-4 py-12 text-center text-[13px] text-ink-subtle">
           {debounced
-            ? "No themes match your search."
-            : "No community themes yet. Be the first to share one."}
+            ? t("No themes match your search.")
+            : t("No community themes yet. Be the first to share one.")}
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -103,6 +106,7 @@ export function CommunityPane() {
 }
 
 function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => void }) {
+  const tr = useT();
   const [t, setT] = useState(theme);
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [myRating, setMyRating] = useState(0);
@@ -139,7 +143,7 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
       <button
         type="button"
         onClick={onOpen}
-        aria-label={`Open ${t.name} details`}
+        aria-label={tr("Open {name}", { name: t.name })}
         className="absolute inset-0 z-0 rounded-md focus-visible:ring-2 focus-visible:ring-accent"
       />
       <div className="pointer-events-none relative z-10 h-36 w-full overflow-hidden bg-elevated">
@@ -164,13 +168,13 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
           <div
             className="pointer-events-auto flex items-center justify-center gap-0.5"
             role="group"
-            aria-label="Rate this theme"
+            aria-label={tr("Rate this theme")}
           >
             {[1, 2, 3, 4, 5].map((n) => (
               <button
                 key={n}
                 onClick={(e) => rate(e, n)}
-                aria-label={`Rate ${n} stars`}
+                aria-label={tr("Rate {count} stars", { count: n })}
                 className="p-0.5"
               >
                 <Star
@@ -201,12 +205,12 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
               <Download size={14} />
             )}
             {state === "done"
-              ? "Added to library"
+              ? tr("Added to library")
               : state === "error"
-                ? "Failed"
+                ? tr("Failed")
                 : state === "loading"
-                  ? "Downloading"
-                  : "Download"}
+                  ? tr("Downloading")
+                  : tr("Download")}
           </button>
         </div>
         <div className="absolute bottom-0 left-0 right-0 flex h-1.5">
@@ -219,11 +223,11 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
         <span className="truncate text-[14.5px] font-semibold text-ink">{t.name}</span>
         <span className="truncate text-[11.5px] text-ink-subtle">
           {t.authorHandle ? (
-            <ThemeAuthorButton handle={t.authorHandle} name={t.author || "Anonymous"} />
+            <ThemeAuthorButton handle={t.authorHandle} name={t.author || tr("Anonymous")} />
           ) : (
-            t.author
+            t.author || tr("Anonymous")
           )}{" "}
-          · {t.downloads} downloads
+          · {t.downloads === 1 ? tr("1 download") : tr("{count} downloads", { count: t.downloads })}
         </span>
       </div>
     </div>

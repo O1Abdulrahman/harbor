@@ -16,6 +16,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Blending";
+  src: url("./assets/fonts/blending.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-canvas: oklch(0.18 0.004 260);
   --color-surface: oklch(0.22 0.004 260);
@@ -42,6 +50,7 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-channel: "General Sans", "Switzer", "Inter", system-ui, sans-serif;
   --font-anime: "WonderfulFontyCure", "Sentient", "Georgia", serif;
+  --font-book: "Blending", "Sentient", "Georgia", serif;
   --font-rank: "Oswald", "Arial Narrow", "Helvetica Neue", sans-serif;
   --font-arabic: "Geeza Pro", "SF Arabic", "Segoe UI", "Tahoma", "Noto Naskh Arabic", serif;
 
@@ -2189,6 +2198,42 @@ html[data-theme-layout="minui"] .harbor-together-pill {
   background: color-mix(in srgb, var(--color-canvas) 93%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+
+.harbor-search-backdrop::before {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  animation: harbor-search-weave 38s linear infinite;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-accent) 7%, transparent) 0 1px,
+      transparent 1px 14px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-accent) 12%, transparent) 0 2px,
+      transparent 2px 84px
+    );
+  inset: -10% -120% -10% -10%;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+@keyframes harbor-search-weave {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(84px, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .harbor-search-backdrop::before {
+    animation: none;
+  }
 }
 
 @keyframes harbor-search-panel-in {

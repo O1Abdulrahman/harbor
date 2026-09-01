@@ -51,7 +51,8 @@ export function PersonRankRow({
     if (expanded) setEverOpened(true);
   }, [expanded]);
 
-  const dept = t(DEPT_LABEL[person.department] ?? person.department);
+  const departmentKey = DEPT_LABEL[person.department];
+  const dept = departmentKey ? t(departmentKey) : person.department;
   const photo = profilePhoto(person.profilePath, tier === "featured" ? 342 : 185);
 
   const frame =
@@ -68,15 +69,16 @@ export function PersonRankRow({
       >
         <div className="flex items-center gap-4 md:gap-5">
           <div className="relative flex shrink-0 items-center">
-            <span
-              className={`flex justify-end ${tier === "featured" ? "w-16" : "w-11"}`}
-            >
+            <span className={`flex justify-end ${tier === "featured" ? "w-16" : "w-11"}`}>
               <RankNumeral rank={person.rank} size={tier} />
             </span>
             <button
               type="button"
               onClick={() => onOpenPerson(person.id)}
-              aria-label={t("Open {name}, ranked {rank}", { name: person.name, rank: String(person.rank) })}
+              aria-label={t("Open {name}, ranked {rank}", {
+                name: person.name,
+                rank: String(person.rank),
+              })}
               className={`relative z-10 -ms-3 shrink-0 overflow-hidden rounded-lg bg-elevated/60 ring-1 ring-edge-soft/60 no-press transition-[scale,box-shadow] duration-250 ease-out motion-safe:group-hover:scale-[1.04] motion-safe:group-hover:shadow-[0_18px_40px_-14px_rgba(0,0,0,0.55)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${faceSize}`}
             >
               {photo ? (
@@ -87,7 +89,12 @@ export function PersonRankRow({
                   className="absolute inset-0 h-full w-full object-cover object-[center_top]"
                 />
               ) : (
-                <Poster src={undefined} seed={String(person.id)} ratio="portrait" className="absolute inset-0" />
+                <Poster
+                  src={undefined}
+                  seed={String(person.id)}
+                  ratio="portrait"
+                  className="absolute inset-0"
+                />
               )}
             </button>
           </div>
@@ -104,7 +111,9 @@ export function PersonRankRow({
             </button>
 
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-[10.5px] uppercase tracking-[0.18em] text-ink-subtle">{dept}</span>
+              <span className="text-[10.5px] uppercase tracking-[0.18em] text-ink-subtle">
+                {dept}
+              </span>
               {ranked && person.avgRating !== null && (
                 <span className="rounded-full bg-white/[0.06] px-1.5 text-[11px] tabular-nums text-ink-muted">
                   {t("{v} avg", { v: person.avgRating.toFixed(1) })}
@@ -128,17 +137,15 @@ export function PersonRankRow({
                     onOpenMeta={onOpenMeta}
                   />
                 )}
-                {source === "consensus" && person.blendSources && person.blendSources.length > 0 && (
-                  <BlendTicks sources={person.blendSources} />
-                )}
+                {source === "consensus" &&
+                  person.blendSources &&
+                  person.blendSources.length > 0 && <BlendTicks sources={person.blendSources} />}
               </div>
             )}
           </div>
 
           {ranked && (
-            <div
-              className={`hidden shrink-0 flex-col gap-2.5 md:flex md:w-[212px] lg:w-[248px]`}
-            >
+            <div className={`hidden shrink-0 flex-col gap-2.5 md:flex md:w-[212px] lg:w-[248px]`}>
               <RankLedger person={person} mode="micro" onOpenMeta={onOpenMeta} />
               <PersonKnownStrip
                 titles={person.topTitles}

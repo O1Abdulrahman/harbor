@@ -36,7 +36,7 @@ test("clickable theme cards use a sibling overlay instead of nesting author butt
     `${root}/community-store/store-top-charts.tsx`,
   ]) {
     const source = read(path);
-    assert.match(source, /aria-label=\{`Open \$\{[^}]+\} details`\}/);
+    assert.match(source, /aria-label=\{tr\("Open \{name\}", \{ name: (?:t|theme)\.name \}\)\}/);
     assert.match(source, /className="absolute inset-0 z-0/);
   }
 });

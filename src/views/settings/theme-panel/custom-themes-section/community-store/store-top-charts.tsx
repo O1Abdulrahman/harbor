@@ -1,4 +1,5 @@
 import { ArrowDownToLine, Flame, Sparkles, Star, TrendingUp, type LucideIcon } from "lucide-react";
+import { t, useT } from "@/lib/i18n";
 import { SectionHeader } from "@/views/profile/section-header";
 import { ThemeAuthorButton } from "../theme-author-button";
 import type { StoreTheme } from "@/lib/theme-store";
@@ -7,14 +8,14 @@ import { fmtCount } from "./format";
 type ChartKind = "rating" | "downloads" | "fresh";
 
 function relTime(iso: string): string {
-  const t = Date.parse(iso);
-  if (!Number.isFinite(t)) return "";
-  const d = Math.max(0, Date.now() - t);
+  const parsed = Date.parse(iso);
+  if (!Number.isFinite(parsed)) return "";
+  const d = Math.max(0, Date.now() - parsed);
   const day = 86_400_000;
-  if (d < day) return "today";
-  if (d < 7 * day) return `${Math.floor(d / day)}d`;
-  if (d < 30 * day) return `${Math.floor(d / (7 * day))}w`;
-  return `${Math.floor(d / (30 * day))}mo`;
+  if (d < day) return t("today");
+  if (d < 7 * day) return t("{count}d", { count: Math.floor(d / day) });
+  if (d < 30 * day) return t("{count}w", { count: Math.floor(d / (7 * day)) });
+  return t("{count}mo", { count: Math.floor(d / (30 * day)) });
 }
 
 export function StoreTopCharts({
@@ -28,24 +29,25 @@ export function StoreTopCharts({
   fresh: StoreTheme[];
   onOpen: (t: StoreTheme) => void;
 }) {
+  const tr = useT();
   return (
     <div className="grid gap-4 lg:grid-cols-3">
       <ChartColumn
-        title="Trending"
+        title={tr("Trending")}
         Icon={TrendingUp}
         kind="rating"
         themes={trending}
         onOpen={onOpen}
       />
       <ChartColumn
-        title="Most popular"
+        title={tr("Most popular")}
         Icon={Flame}
         kind="downloads"
         themes={popular}
         onOpen={onOpen}
       />
       <ChartColumn
-        title="New & notable"
+        title={tr("New & notable")}
         Icon={Sparkles}
         kind="fresh"
         themes={fresh}
@@ -68,13 +70,16 @@ function ChartColumn({
   themes: StoreTheme[];
   onOpen: (t: StoreTheme) => void;
 }) {
+  const tr = useT();
   const rows = themes.slice(0, 5);
   return (
-    <section aria-label={title} className="rounded-md bg-surface p-4 ring-1 ring-edge-soft">
-      <SectionHeader icon={<Icon size={16} className="text-ink-subtle" />} label={title} />
+    <section aria-label={tr(title)} className="rounded-md bg-surface p-4 ring-1 ring-edge-soft">
+      <SectionHeader icon={<Icon size={16} className="text-ink-subtle" />} label={tr(title)} />
       <div className="flex flex-col">
         {rows.length === 0 ? (
-          <p className="px-1 py-6 text-center text-[13px] text-ink-subtle">Nothing here yet</p>
+          <p className="px-1 py-6 text-center text-[13px] text-ink-subtle">
+            {tr("Nothing here yet")}
+          </p>
         ) : (
           rows.map((t, i) => (
             <ChartRow key={t.id} rank={i + 1} theme={t} kind={kind} onOpen={onOpen} />
@@ -128,13 +133,14 @@ function ChartRow({
   kind: ChartKind;
   onOpen: (t: StoreTheme) => void;
 }) {
+  const tr = useT();
   const top = rank <= 3;
   return (
     <div className="group relative flex cursor-pointer items-center gap-3 rounded-md p-2 text-start transition-colors hover:bg-elevated">
       <button
         type="button"
         onClick={() => onOpen(theme)}
-        aria-label={`Open ${theme.name} details`}
+        aria-label={tr("Open {name}", { name: theme.name })}
         className="absolute inset-0 z-0 rounded-md focus-visible:ring-2 focus-visible:ring-accent"
       />
       <span
@@ -153,9 +159,9 @@ function ChartRow({
         </span>
         <span className="truncate text-[11.5px] text-ink-subtle">
           {theme.authorHandle ? (
-            <ThemeAuthorButton handle={theme.authorHandle} name={theme.author || "Anonymous"} />
+            <ThemeAuthorButton handle={theme.authorHandle} name={theme.author || tr("Anonymous")} />
           ) : (
-            theme.author || "Anonymous"
+            theme.author || tr("Anonymous")
           )}
         </span>
       </span>

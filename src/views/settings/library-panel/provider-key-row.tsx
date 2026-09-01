@@ -4,7 +4,7 @@ import { useT } from "@/lib/i18n";
 import { SettingRow } from "../kit";
 import type { LibraryKey } from "../library-panel";
 
-export type KeyId = LibraryKey | "mdblist" | "postersrv" | "audd" | "songai";
+export type KeyId = LibraryKey | "mdblist" | "postersrv" | "audd" | "songai" | "nyt";
 
 export type KeyEntry = {
   id: KeyId;

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useModalExit } from "@/components/modal-shell";
 import { createPortal } from "react-dom";
 import { ArrowDownToLine, Check, RefreshCw, Share2, Star, X } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
 import { FeaturedBadge } from "@/views/profile/profile-bits";
 import { subscribeOpenProfile } from "@/lib/social/open-profile";
@@ -15,6 +16,7 @@ import { useAcquireState } from "./market/use-acquire";
 import { tokensFromStoreTheme } from "./market/fit-palette";
 
 export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: () => void }) {
+  const tr = useT();
   const { closing, close } = useModalExit(onClose);
   const [t, setT] = useState(theme);
   const [myRating, setMyRating] = useState(0);
@@ -58,13 +60,18 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
   };
 
   const shownStars = hover || myRating || Math.round(t.ratingAvg);
+  const authorName = t.author || tr("Anonymous");
+  const authorMarker = "\uFFFC";
+  const [authorPrefix, authorSuffix = ""] = tr("by {author}", {
+    author: authorMarker,
+  }).split(authorMarker);
 
   return createPortal(
     <div
       className={`${closing ? "animate-scrim-out" : "animate-scrim-in"} fixed inset-0 z-[244] flex items-center justify-center p-4 sm:p-6`}
     >
       <button
-        aria-label="Close"
+        aria-label={tr("Close")}
         onClick={close}
         className="absolute inset-0 cursor-default bg-canvas/75 backdrop-blur-sm"
       />
@@ -73,7 +80,7 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
       >
         <button
           onClick={close}
-          aria-label="Close"
+          aria-label={tr("Close")}
           className="absolute end-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-ink-muted ring-1 ring-edge-soft transition-colors hover:bg-raised hover:text-ink"
         >
           <X size={18} />
@@ -105,11 +112,12 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
                   </span>
                   {t.authorHandle ? (
                     <span>
-                      by{" "}
-                      <ThemeAuthorButton handle={t.authorHandle} name={t.author || "Anonymous"} />
+                      {authorPrefix}
+                      <ThemeAuthorButton handle={t.authorHandle} name={authorName} />
+                      {authorSuffix}
                     </span>
                   ) : (
-                    <span>by {t.author || "Anonymous"}</span>
+                    <span>{tr("by {author}", { author: authorName })}</span>
                   )}
                 </div>
               </div>
@@ -128,20 +136,22 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
                   size="md"
                   state={state}
                   onClick={run}
-                  label="Get theme"
+                  label={tr("Get theme")}
                 />
                 <MarketCta variant="ghost" size="md" onClick={share}>
                   {copied ? <Check size={16} /> : <Share2 size={16} />}
-                  {copied ? "Copied" : "Share"}
+                  {copied ? tr("Copied") : tr("Share")}
                 </MarketCta>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <span className="text-[12.5px] font-medium text-ink-subtle">Rate this theme</span>
+                <span className="text-[12.5px] font-medium text-ink-subtle">
+                  {tr("Rate this theme")}
+                </span>
                 <div
                   className="flex items-center gap-0.5"
                   role="group"
-                  aria-label="Rate this theme"
+                  aria-label={tr("Rate this theme")}
                   onMouseLeave={() => setHover(0)}
                 >
                   {[1, 2, 3, 4, 5].map((n) => (
@@ -149,7 +159,7 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
                       key={n}
                       onClick={() => rate(n)}
                       onMouseEnter={() => setHover(n)}
-                      aria-label={`Rate ${n} stars`}
+                      aria-label={tr("Rate {count} stars", { count: n })}
                       className="p-0.5 transition-transform hover:scale-110 active:scale-95 motion-reduce:transform-none"
                     >
                       <Star
@@ -168,9 +178,10 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
               <div className="flex items-start gap-2.5 rounded-md bg-surface px-3.5 py-3 text-[12.5px] leading-relaxed text-ink-muted ring-1 ring-edge-soft">
                 <RefreshCw size={16} className="mt-0.5 shrink-0 text-ink-subtle" />
                 <span>
-                  <span className="font-semibold text-ink">Update queued.</span> The author
-                  submitted a new version that's in review. You're seeing the current published
-                  version until it's approved.
+                  <span className="font-semibold text-ink">{tr("Update queued.")}</span>{" "}
+                  {tr(
+                    "The author submitted a new version that's in review. You're seeing the current published version until it's approved.",
+                  )}
                 </span>
               </div>
             )}
