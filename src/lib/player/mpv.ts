@@ -21,7 +21,7 @@ import { SubtitleSelectionCoordinator } from "./subtitle-selection";
 import { PreparedSubtitleSeedBatch } from "@/lib/subtitles/seed-batch";
 import { isSafeProviderSubtitleUrl } from "@/lib/subtitles/provider-url";
 import {
-  emptySnapshot,
+  initialPlayerSnapshot,
   type PlayerBridge,
   type PlayerCapabilities,
   type PlayerSeekPrecision,
@@ -250,7 +250,7 @@ function normalizeMediaPath(path: string): string {
 
 export function createMpvBridge(mpvOptions?: MpvOptions): PlayerBridge {
   let host: HTMLElement | null = null;
-  let snap: PlayerSnapshot = { ...emptySnapshot };
+  let snap: PlayerSnapshot = initialPlayerSnapshot();
   let profileAf = "";
   let hdrToSdr = mpvOptions?.hdrToSdr ?? true;
   const applyAudioFilters = () => {
