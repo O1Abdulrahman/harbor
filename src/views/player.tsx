@@ -167,6 +167,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     (isBundledEngineUrl(src.url) || isLocalEngineUrl(src.url)) &&
     !src.url.includes("/hlsv2/") &&
     !!src.streamRef?.infoHash;
+  const isLocalSrc = isLocalUrl(src.url);
   const { stats: engineStats, genuineFailure } = useEngineStats({
     url: src.url,
     infoHash: src.streamRef?.infoHash ?? null,
@@ -184,6 +185,8 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
           streamLen: engineStats?.streamLen ?? 0,
         }),
       );
+    } else if (isLocalSrc) {
+      setPlaybackDownloaded(1);
     } else if (!isLive && !isHls) {
       const dur = snap.durationSec || 0;
       setPlaybackDownloaded(dur > 0 ? Math.min(1, (snap.positionSec + snap.bufferedSec) / dur) : 0);
@@ -195,6 +198,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     engineStats?.streamLen,
     src.url,
     isP2pEngine,
+    isLocalSrc,
     src.isLive,
     src.meta.id,
     snap.positionSec,
@@ -740,6 +744,63 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
   const videoFill = useVideoFill(bridgeRef, src.url, playing);
   useLivePictureEq(bridgeRef, src.url);
   const anime4k = useAnime4k(bridgeRef, src.url, src, snap.videoWidth);
+  const [mouseHoldSpeedActive, setMouseHoldSpeedActive] = useState(false);
+  const mouseHoldRef = useRef<{
+    pointerId: number | null;
+    timer: number | null;
+    engaged: boolean;
+    baseRate: number;
+  }>({ pointerId: null, timer: null, engaged: false, baseRate: 1 });
+  const suppressMouseClickRef = useRef(false);
+  const suppressMouseClickTimerRef = useRef<number | null>(null);
+
+  const releaseMouseHoldSpeed = useCallback(
+    (suppressClick: boolean) => {
+      const hold = mouseHoldRef.current;
+      if (hold.pointerId == null) return;
+      if (hold.timer != null) {
+        window.clearTimeout(hold.timer);
+        hold.timer = null;
+      }
+      const wasEngaged = hold.engaged;
+      hold.pointerId = null;
+      hold.engaged = false;
+      if (!wasEngaged) return;
+
+      bridgeRef.current?.setRate(hold.baseRate);
+      setMouseHoldSpeedActive(false);
+      if (!suppressClick) return;
+
+      suppressMouseClickRef.current = true;
+      if (suppressMouseClickTimerRef.current != null) {
+        window.clearTimeout(suppressMouseClickTimerRef.current);
+      }
+      suppressMouseClickTimerRef.current = window.setTimeout(() => {
+        suppressMouseClickRef.current = false;
+        suppressMouseClickTimerRef.current = null;
+      }, 0);
+    },
+    [bridgeRef],
+  );
+
+  useEffect(() => {
+    return () => {
+      const hold = mouseHoldRef.current;
+      if (hold.timer != null) window.clearTimeout(hold.timer);
+      if (hold.engaged) {
+        bridgeRef.current?.setRate(hold.baseRate);
+        setMouseHoldSpeedActive(false);
+      }
+      hold.pointerId = null;
+      hold.timer = null;
+      hold.engaged = false;
+      suppressMouseClickRef.current = false;
+      if (suppressMouseClickTimerRef.current != null) {
+        window.clearTimeout(suppressMouseClickTimerRef.current);
+      }
+    };
+  }, [bridgeRef, src.url]);
+
   const { holdSpeedActive, showStats, subtitleOffsetSec } = usePlayerHotkeys({
     bridgeRef,
     snap,
@@ -874,7 +935,6 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     exitPlayer,
   });
 
-  const isLocalSrc = isLocalUrl(src.url);
   const cancelToPicker = useCallback(() => {
     if (isLocalSrc || src.meta.id?.startsWith("iptv:")) {
       void closePlayer();
@@ -1026,7 +1086,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     subShowInPip: settings.subShowInPip,
     subAssNative,
     showStats,
-    holdSpeedActive,
+    holdSpeedActive: holdSpeedActive || mouseHoldSpeedActive,
     subtitleOffsetSec,
     volumeIndicator,
     volumeHudPosition: settings.playerVolumeHudPosition,
@@ -1192,9 +1252,56 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
       <div
         ref={videoMountRef}
         className="absolute inset-0"
+        onPointerDown={(e) => {
+          if (e.target !== e.currentTarget) return;
+          if (
+            e.pointerType !== "mouse" ||
+            !e.isPrimary ||
+            e.button !== 0 ||
+            drawMode ||
+            pipMode ||
+            screenLocked
+          ) {
+            return;
+          }
+          const hold = mouseHoldRef.current;
+          if (hold.pointerId != null) return;
+          const pointerId = e.pointerId;
+          hold.pointerId = pointerId;
+          hold.baseRate = snapRef.current.rate;
+          e.currentTarget.setPointerCapture(pointerId);
+          hold.timer = window.setTimeout(() => {
+            hold.timer = null;
+            if (hold.pointerId !== pointerId || snapRef.current.status !== "playing") return;
+            hold.engaged = true;
+            setMouseHoldSpeedActive(true);
+            bridgeRef.current?.setRate(Math.max(2, hold.baseRate));
+          }, 350);
+        }}
+        onPointerUp={(e) => {
+          if (mouseHoldRef.current.pointerId !== e.pointerId) return;
+          releaseMouseHoldSpeed(true);
+          if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+          }
+        }}
+        onPointerCancel={(e) => {
+          if (mouseHoldRef.current.pointerId === e.pointerId) releaseMouseHoldSpeed(false);
+        }}
+        onLostPointerCapture={(e) => {
+          if (mouseHoldRef.current.pointerId === e.pointerId) releaseMouseHoldSpeed(false);
+        }}
         onClick={(e) => {
           if (e.target !== e.currentTarget) return;
           if (drawMode || pipMode) return;
+          if (suppressMouseClickRef.current) {
+            suppressMouseClickRef.current = false;
+            if (suppressMouseClickTimerRef.current != null) {
+              window.clearTimeout(suppressMouseClickTimerRef.current);
+              suppressMouseClickTimerRef.current = null;
+            }
+            return;
+          }
           if (dismissedJustNow()) {
             clearOverlayDismiss();
             return;

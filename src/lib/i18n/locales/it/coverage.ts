@@ -1197,6 +1197,30 @@ const coverage: Record<string, string> = {
   days: "giorni",
   "{n} episodes on home servers": "{n} episodi sui server domestici",
   "{voice} could not be generated. {message}": "Non è stato possibile generare {voice}. {message}",
+  "Direct/debrid": "Diretto/debrid",
+  "Audio verified": "Verificato tramite audio",
+  "Watchlist overlaps ({n})": "Elementi in comune nella lista ({n})",
+  "Favorites overlap ({n})": "Preferiti in comune ({n})",
+  "Addons overlap ({n})": "Addon in comune ({n})",
+  "Import selected data?": "Importare i dati selezionati?",
+  "Show direct, debrid, and peer-to-peer sources": "Mostra fonti dirette, debrid e peer-to-peer",
+  "Prefer direct and debrid sources; keep P2P when only web links are available":
+    "Preferisci fonti dirette e debrid; mantieni il P2P quando sono disponibili solo collegamenti web",
+  "Prefer peer-to-peer torrent sources": "Preferisci fonti torrent peer-to-peer",
+  "Hearing impaired": "Non udenti",
+  "Foreign-only": "Solo lingua straniera",
+  "Machine-translated": "Tradotto automaticamente",
+  "Direct/debrid only": "Solo diretto/debrid",
+  "Match subtitles across languages (experimental)":
+    "Abbina i sottotitoli tra lingue diverse (sperimentale)",
+  "When the audio and subtitle use different languages, Harbor compares a release-matched subtitle in the audio language. It only offers a fix unless every safety check is measured.":
+    "Quando audio e sottotitoli usano lingue diverse, Harbor confronta un sottotitolo corrispondente alla versione nella lingua dell’audio. Offre soltanto una correzione finché ogni controllo di sicurezza non è stato misurato.",
+  "New York Times": "New York Times",
+  "Bestseller lists in the eBook section.": "Classifiche dei bestseller nella sezione eBook.",
+  "New York Times · bestseller lists": "New York Times · classifiche bestseller",
+  "NYT Books API key": "Chiave API NYT Books",
+  "Choose whether Harbor prefers direct and debrid sources, peer-to-peer torrents, or shows both.":
+    "Scegli se Harbor deve preferire fonti dirette e debrid, torrent peer-to-peer oppure mostrarli entrambi.",
 };
 
 export default coverage;

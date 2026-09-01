@@ -2549,6 +2549,24 @@ const SETTINGS_OPTIONS: SettingsOption[] = [
     keywords: ["picker layout", "condensed", "stremio", "sources", "drawer", "list"],
   },
   {
+    label: "Source mode (Both / Direct/debrid / P2P)",
+    section: "streaming",
+    anchorTitle: "Source mode",
+    keywords: [
+      "source mode",
+      "both",
+      "direct",
+      "debrid",
+      "addons",
+      "p2p",
+      "peer to peer",
+      "torrent sources",
+      "missing torrents",
+      "hidden torrents",
+      "stream mode",
+    ],
+  },
+  {
     label: "Result order (ranking / addon order)",
     section: "streaming",
     anchorTitle: "Result order",
@@ -8776,6 +8794,18 @@ const SETTINGS_OPTIONS: SettingsOption[] = [
     section: "subtitles",
     anchorTitle: "Subtitle auto-sync",
     keywords: ["speech recognition", "asr", "smart resync", "audio derived sync", "whisper"],
+  },
+  {
+    label: "Match subtitles across languages (experimental)",
+    section: "subtitles",
+    anchorTitle: "Subtitle auto-sync",
+    keywords: [
+      "cross language",
+      "different language",
+      "pivot subtitle",
+      "audio language",
+      "experimental sync",
+    ],
   },
   {
     label: "Stay on one source for a season",

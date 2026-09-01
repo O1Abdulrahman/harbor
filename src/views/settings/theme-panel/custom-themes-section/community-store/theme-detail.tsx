@@ -5,6 +5,8 @@ import { ArrowDownToLine, Check, RefreshCw, Share2, Star, X } from "lucide-react
 import { useT } from "@/lib/i18n";
 import { downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
 import { FeaturedBadge } from "@/views/profile/profile-bits";
+import { subscribeOpenProfile } from "@/lib/social/open-profile";
+import { ThemeAuthorButton } from "../theme-author-button";
 import { fmtCount } from "./format";
 import { CommentsSection } from "./comments/comments-section";
 import { Fit } from "./market/fit";
@@ -36,6 +38,8 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
     return () => document.removeEventListener("keydown", onKey, true);
   }, [close]);
 
+  useEffect(() => subscribeOpenProfile(close), [close]);
+
   const rate = async (v: number) => {
     setMyRating(v);
     try {
@@ -56,6 +60,11 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
   };
 
   const shownStars = hover || myRating || Math.round(t.ratingAvg);
+  const authorName = t.author || tr("Anonymous");
+  const authorMarker = "\uFFFC";
+  const [authorPrefix, authorSuffix = ""] = tr("by {author}", {
+    author: authorMarker,
+  }).split(authorMarker);
 
   return createPortal(
     <div
@@ -101,7 +110,15 @@ export function ThemeDetail({ theme, onClose }: { theme: StoreTheme; onClose: ()
                     <ArrowDownToLine size={12} strokeWidth={2.2} />
                     {fmtCount(t.downloads)}
                   </span>
-                  <span>{tr("by {author}", { author: t.author || tr("Anonymous") })}</span>
+                  {t.authorHandle ? (
+                    <span>
+                      {authorPrefix}
+                      <ThemeAuthorButton handle={t.authorHandle} name={authorName} />
+                      {authorSuffix}
+                    </span>
+                  ) : (
+                    <span>{tr("by {author}", { author: authorName })}</span>
+                  )}
                 </div>
               </div>
 

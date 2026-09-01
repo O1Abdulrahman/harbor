@@ -632,6 +632,20 @@ const coverage: Record<string, string> = {
   "On the poster": "Na capa",
   Scores: "Notas",
   "Episode order": "Ordem dos episódios",
+  "Watchlist overlaps ({n})": "Itens em comum na lista para assistir ({n})",
+  "Favorites overlap ({n})": "Favoritos em comum ({n})",
+  "Addons overlap ({n})": "Addons em comum ({n})",
+  "Import selected data?": "Importar os dados selecionados?",
+  "Show direct, debrid, and peer-to-peer sources": "Mostrar fontes diretas, debrid e ponto a ponto",
+  "Prefer direct and debrid sources; keep P2P when only web links are available":
+    "Preferir fontes diretas e debrid; manter P2P quando apenas links da web estiverem disponíveis",
+  "Prefer peer-to-peer torrent sources": "Preferir fontes de torrent ponto a ponto",
+  "New York Times": "New York Times",
+  "Bestseller lists in the eBook section.": "Listas de best-sellers na seção de eBooks.",
+  "New York Times · bestseller lists": "New York Times · listas de best-sellers",
+  "NYT Books API key": "Chave da API NYT Books",
+  "Choose whether Harbor prefers direct and debrid sources, peer-to-peer torrents, or shows both.":
+    "Escolha se o Harbor prefere fontes diretas e debrid, torrents ponto a ponto ou mostra ambos.",
 };
 
 export default coverage;

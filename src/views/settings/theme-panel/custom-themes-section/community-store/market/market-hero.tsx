@@ -4,6 +4,7 @@ import { useT } from "@/lib/i18n";
 import type { StoreTheme } from "@/lib/theme-store";
 import type { StoreBundle } from "@/lib/bundle-store";
 import { FeaturedBadge } from "@/views/profile/profile-bits";
+import { ThemeAuthorButton } from "../../theme-author-button";
 import { fmtCount } from "../format";
 import { Fit } from "./fit";
 import { PaletteSeam } from "./palette-seam";
@@ -37,6 +38,11 @@ export function MarketHero({
 }) {
   const t = useT();
   const { state, run } = useAcquireState(onGet);
+  const authorName = item.author || t("Anonymous");
+  const authorMarker = "\uFFFC";
+  const [authorPrefix, authorSuffix = ""] = t("by {author}", {
+    author: authorMarker,
+  }).split(authorMarker);
 
   let payload: ReactNode;
   let art: ReactNode;
@@ -81,7 +87,15 @@ export function MarketHero({
             <ArrowDownToLine size={14} strokeWidth={2.2} />
             {t("{count} downloads", { count: fmtCount(item.downloads) })}
           </span>
-          <span>{t("by {author}", { author: item.author || t("Anonymous") })}</span>
+          {"swatch" in item && item.authorHandle ? (
+            <span>
+              {authorPrefix}
+              <ThemeAuthorButton handle={item.authorHandle} name={authorName} />
+              {authorSuffix}
+            </span>
+          ) : (
+            <span>{t("by {author}", { author: authorName })}</span>
+          )}
         </div>
         <div className="max-w-[34rem]">{payload}</div>
         <div className="mt-1 flex flex-wrap items-center gap-3">

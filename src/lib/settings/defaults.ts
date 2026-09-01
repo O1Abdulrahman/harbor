@@ -286,6 +286,7 @@ export const DEFAULT: Settings = {
   autoSyncApplyStructural: false,
   autoSyncDrift: false,
   subtitleAutoSyncAsr: true,
+  subtitleAutoSyncPivot: false,
   subtitleAutoSyncCrowd: true,
   communitySyncUrl: "",
   communitySyncOptOut: false,
@@ -508,6 +509,7 @@ export const DEFAULT: Settings = {
   simklScrobbleEnabled: true,
   simklAnimeTitleLanguage: "english",
   weekStartsMonday: false,
+  calendarPosterSize: "default",
   customCalendar: {
     trackedPeople: [],
     includeTraktWatchlist: false,

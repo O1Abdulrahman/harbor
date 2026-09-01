@@ -834,6 +834,29 @@ const coverage: Record<string, string> = {
   days: "天",
   "{n} episodes on home servers": "家庭服务器上有 {n} 集",
   "{voice} could not be generated. {message}": "无法生成语音 {voice}。{message}",
+  "Direct/debrid": "直连/debrid",
+  "Audio verified": "已通过音频验证",
+  "Watchlist overlaps ({n})": "观看列表重复项 ({n})",
+  "Favorites overlap ({n})": "收藏夹重复项 ({n})",
+  "Addons overlap ({n})": "插件重复项 ({n})",
+  "Import selected data?": "导入所选数据？",
+  "Show direct, debrid, and peer-to-peer sources": "显示直连、debrid 和点对点来源",
+  "Prefer direct and debrid sources; keep P2P when only web links are available":
+    "优先使用直连和 debrid 来源；仅有网页链接时保留 P2P",
+  "Prefer peer-to-peer torrent sources": "优先使用点对点种子来源",
+  "Hearing impaired": "听障字幕",
+  "Foreign-only": "仅外语对白",
+  "Machine-translated": "机器翻译",
+  "Direct/debrid only": "仅直连/debrid",
+  "Match subtitles across languages (experimental)": "跨语言匹配字幕（实验性）",
+  "When the audio and subtitle use different languages, Harbor compares a release-matched subtitle in the audio language. It only offers a fix unless every safety check is measured.":
+    "当音频和字幕使用不同语言时，Harbor 会与音频语言中匹配同一发行版本的字幕进行比较。除非所有安全检查都已完成测量，否则只会提供修正建议。",
+  "New York Times": "New York Times",
+  "Bestseller lists in the eBook section.": "eBook 区域中的畅销书榜单。",
+  "New York Times · bestseller lists": "New York Times · 畅销书榜单",
+  "NYT Books API key": "NYT Books API 密钥",
+  "Choose whether Harbor prefers direct and debrid sources, peer-to-peer torrents, or shows both.":
+    "选择 Harbor 优先使用直连和 debrid 来源、点对点种子，或同时显示两者。",
 };
 
 export default coverage;

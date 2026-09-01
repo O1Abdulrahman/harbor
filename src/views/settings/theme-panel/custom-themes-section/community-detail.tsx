@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useEscape, useModalExit } from "@/components/modal-shell";
 import { createPortal } from "react-dom";
 import { Check, Download, Loader2, Share2, Star, X } from "lucide-react";
-import { downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
 import { useT } from "@/lib/i18n";
+import { downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
+import { subscribeOpenProfile } from "@/lib/social/open-profile";
+import { ThemeAuthorButton } from "./theme-author-button";
 
 export function CommunityDetail({ theme, onClose }: { theme: StoreTheme; onClose: () => void }) {
   const tr = useT();
   const { closing, close } = useModalExit(onClose);
   useEscape(close);
+  useEffect(() => subscribeOpenProfile(close), [close]);
   const [t, setT] = useState(theme);
   const [downloading, setDownloading] = useState(false);
   const [done, setDone] = useState(false);
@@ -49,6 +52,11 @@ export function CommunityDetail({ theme, onClose }: { theme: StoreTheme; onClose
   };
 
   const shownRating = myRating || Math.round(t.ratingAvg);
+  const authorName = t.author || tr("Anonymous");
+  const authorMarker = "\uFFFC";
+  const [authorPrefix, authorSuffix = ""] = tr("by {author}", {
+    author: authorMarker,
+  }).split(authorMarker);
 
   return createPortal(
     <div
@@ -82,7 +90,16 @@ export function CommunityDetail({ theme, onClose }: { theme: StoreTheme; onClose
                 {t.name}
               </h2>
               <p className="text-[13px] text-ink-subtle">
-                {tr("by {author}", { author: t.author })} ·{" "}
+                {t.authorHandle ? (
+                  <>
+                    {authorPrefix}
+                    <ThemeAuthorButton handle={t.authorHandle} name={authorName} />
+                    {authorSuffix}
+                  </>
+                ) : (
+                  tr("by {author}", { author: authorName })
+                )}{" "}
+                ·{" "}
                 {t.downloads === 1
                   ? tr("1 download")
                   : tr("{count} downloads", { count: t.downloads })}{" "}

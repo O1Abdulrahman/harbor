@@ -879,6 +879,29 @@ const coverage: Record<string, string> = {
   days: "日",
   "{n} episodes on home servers": "ホームサーバーに{n}話",
   "{voice} could not be generated. {message}": "{voice}を生成できませんでした。{message}",
+  "Direct/debrid": "直接/debrid",
+  "Audio verified": "音声で確認済み",
+  "Watchlist overlaps ({n})": "ウォッチリストの重複 ({n})",
+  "Favorites overlap ({n})": "お気に入りの重複 ({n})",
+  "Addons overlap ({n})": "アドオンの重複 ({n})",
+  "Import selected data?": "選択したデータをインポートしますか？",
+  "Show direct, debrid, and peer-to-peer sources": "直接、debrid、P2Pソースを表示",
+  "Prefer direct and debrid sources; keep P2P when only web links are available":
+    "直接およびdebridソースを優先し、Webリンクしかない場合はP2Pを残す",
+  "Prefer peer-to-peer torrent sources": "P2Pトレントソースを優先",
+  "Hearing impaired": "聴覚障害者向け",
+  "Foreign-only": "外国語部分のみ",
+  "Machine-translated": "機械翻訳",
+  "Direct/debrid only": "直接/debridのみ",
+  "Match subtitles across languages (experimental)": "異なる言語間で字幕を照合（試験的）",
+  "When the audio and subtitle use different languages, Harbor compares a release-matched subtitle in the audio language. It only offers a fix unless every safety check is measured.":
+    "音声と字幕の言語が異なる場合、Harborは同じリリースに対応する音声言語の字幕と比較します。すべての安全性チェックを測定できない限り、修正は提案のみです。",
+  "New York Times": "New York Times",
+  "Bestseller lists in the eBook section.": "eBookセクションのベストセラー一覧。",
+  "New York Times · bestseller lists": "New York Times · ベストセラー一覧",
+  "NYT Books API key": "NYT Books APIキー",
+  "Choose whether Harbor prefers direct and debrid sources, peer-to-peer torrents, or shows both.":
+    "Harborが直接およびdebridソース、P2Pトレントのどちらを優先するか、または両方を表示するかを選択します。",
 };
 
 export default coverage;
