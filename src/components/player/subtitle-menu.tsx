@@ -15,6 +15,7 @@ import { wasLimitReached } from "@/lib/subtitles/limit-signal";
 import { bindSubtitleDownloadAuth } from "@/lib/subtitles/provider-auth";
 import type { SubtitleLoadMetadata } from "@/lib/subtitles/types";
 import { MenuBody } from "./subtitle-menu/menu-body";
+import { ResizableSubtitlePanel } from "./subtitle-menu/resizable-panel";
 import { useSubtitleContext } from "./subtitle-menu/subtitle-context-store";
 import type { SubtitleMenuProps } from "./subtitle-menu/types";
 import { buildOverlayState } from "./subtitle-menu/utils";
@@ -206,14 +207,14 @@ export function SubtitleMenu(props: Props) {
         </button>
       </Tooltip>
       {open && (forceInline || !useOverlay) && (
-        <div className="fixed end-14 bottom-[150px] flex h-[460px] max-h-[calc(100vh-174px)] w-[560px] max-w-[calc(100vw-72px)] flex-col overflow-hidden rounded-md bg-elevated shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] animate-menu-pop">
+        <ResizableSubtitlePanel className="fixed end-14 bottom-[150px] animate-menu-pop">
           <MenuBody
             {...props}
             preferredLanguages={preferredLanguages}
             onClose={() => setOpen(false)}
             onOpenStyleBar={openStyleBar}
           />
-        </div>
+        </ResizableSubtitlePanel>
       )}
     </div>
   );
