@@ -4,6 +4,7 @@ import { Search } from "@/components/icons/search-icon";
 import { browseThemes, downloadTheme, rateTheme, type StoreTheme } from "@/lib/theme-store";
 import { useT } from "@/lib/i18n";
 import { CommunityDetail } from "./community-detail";
+import { ThemeAuthorButton } from "./theme-author-button";
 import { ThemeUploadFlow } from "./theme-upload-flow";
 
 const SORTS = [
@@ -138,15 +139,14 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
   const shownRating = myRating || Math.round(t.ratingAvg);
 
   return (
-    <div
-      onClick={onOpen}
-      role="button"
-      tabIndex={0}
-      aria-label={tr("Open {name}", { name: t.name })}
-      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onOpen()}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-md bg-surface text-start transition hover:bg-elevated hover:harbor-float"
-    >
-      <div className="relative h-36 w-full overflow-hidden bg-elevated">
+    <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-md bg-surface text-start transition hover:bg-elevated hover:harbor-float">
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={tr("Open {name}", { name: t.name })}
+        className="absolute inset-0 z-0 rounded-md focus-visible:ring-2 focus-visible:ring-accent"
+      />
+      <div className="pointer-events-none relative z-10 h-36 w-full overflow-hidden bg-elevated">
         {t.cover ? (
           <img
             src={t.cover}
@@ -166,7 +166,7 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
         </div>
         <div className="absolute inset-0 flex flex-col justify-end gap-2 bg-gradient-to-t from-black/85 via-black/35 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           <div
-            className="flex items-center justify-center gap-0.5"
+            className="pointer-events-auto flex items-center justify-center gap-0.5"
             role="group"
             aria-label={tr("Rate this theme")}
           >
@@ -187,7 +187,7 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
           <button
             onClick={download}
             disabled={state === "loading"}
-            className={`flex h-9 items-center justify-center gap-1.5 rounded-md text-[12.5px] font-semibold transition-colors disabled:opacity-80 ${
+            className={`pointer-events-auto flex h-9 items-center justify-center gap-1.5 rounded-md text-[12.5px] font-semibold transition-colors disabled:opacity-80 ${
               state === "done"
                 ? "bg-success text-black"
                 : state === "error"
@@ -219,11 +219,15 @@ function CommunityCard({ theme, onOpen }: { theme: StoreTheme; onOpen: () => voi
           ))}
         </div>
       </div>
-      <div className="flex min-w-0 flex-col px-4 py-3">
+      <div className="pointer-events-none relative z-10 flex min-w-0 flex-col px-4 py-3">
         <span className="truncate text-[14.5px] font-semibold text-ink">{t.name}</span>
         <span className="truncate text-[11.5px] text-ink-subtle">
-          {t.author} ·{" "}
-          {t.downloads === 1 ? tr("1 download") : tr("{count} downloads", { count: t.downloads })}
+          {t.authorHandle ? (
+            <ThemeAuthorButton handle={t.authorHandle} name={t.author || tr("Anonymous")} />
+          ) : (
+            t.author || tr("Anonymous")
+          )}{" "}
+          · {t.downloads === 1 ? tr("1 download") : tr("{count} downloads", { count: t.downloads })}
         </span>
       </div>
     </div>

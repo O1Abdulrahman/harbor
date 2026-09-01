@@ -198,6 +198,20 @@ export type PlayerOverlayLayersProps = {
 };
 
 export const PlayerOverlayLayers = memo(function PlayerOverlayLayers(p: PlayerOverlayLayersProps) {
+  const roomAvatarTopLeft =
+    p.inRoom && !p.avatarsHidden && p.participants.length > 0 && p.avatarsCorner === "top-left";
+  const roomAvatarTopRight =
+    p.inRoom && !p.avatarsHidden && p.participants.length > 0 && p.avatarsCorner === "top-right";
+  const roomChatTopLeft = p.inRoom && !p.chatHidden && p.chatCorner === "top-left";
+  const roomChatTopRight = p.inRoom && !p.chatHidden && p.chatCorner === "top-right";
+  const topLeftOccupied = p.showStats || roomAvatarTopLeft || roomChatTopLeft;
+  const topRightOccupied = roomAvatarTopRight || roomChatTopRight;
+  const contentAdvisoryPosition = topLeftOccupied
+    ? topRightOccupied
+      ? "top-center"
+      : "top-end"
+    : "top-start";
+
   return (
     <>
       <StageOverlays
@@ -214,6 +228,7 @@ export const PlayerOverlayLayers = memo(function PlayerOverlayLayers(p: PlayerOv
         videoFillPill={p.videoFillPill}
         subDropToast={p.subDropToast}
         contentAdvisory={p.contentAdvisory}
+        contentAdvisoryPosition={contentAdvisoryPosition}
         onSubDelay={(s) => {
           p.bridgeRef.current?.setSubDelay(s);
           writePlayerPrefs(p.metaId, { subDelaySec: s });

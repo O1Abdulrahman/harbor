@@ -1024,6 +1024,31 @@ const coverage: Record<string, string> = {
   days: "dni",
   "{n} episodes on home servers": "{n} odcinków na serwerach domowych",
   "{voice} could not be generated. {message}": "Nie udało się wygenerować głosu {voice}. {message}",
+  "Direct/debrid": "Bezpośrednie/debrid",
+  "Audio verified": "Zweryfikowane na podstawie dźwięku",
+  "Watchlist overlaps ({n})": "Wspólne pozycje na liście do obejrzenia ({n})",
+  "Favorites overlap ({n})": "Wspólne ulubione ({n})",
+  "Addons overlap ({n})": "Wspólne dodatki ({n})",
+  "Import selected data?": "Zaimportować wybrane dane?",
+  "Show direct, debrid, and peer-to-peer sources":
+    "Pokaż źródła bezpośrednie, debrid i peer-to-peer",
+  "Prefer direct and debrid sources; keep P2P when only web links are available":
+    "Preferuj źródła bezpośrednie i debrid; zachowaj P2P, gdy dostępne są tylko łącza internetowe",
+  "Prefer peer-to-peer torrent sources": "Preferuj źródła torrent peer-to-peer",
+  "Hearing impaired": "Dla niesłyszących",
+  "Foreign-only": "Tylko język obcy",
+  "Machine-translated": "Tłumaczenie maszynowe",
+  "Direct/debrid only": "Tylko bezpośrednie/debrid",
+  "Match subtitles across languages (experimental)":
+    "Dopasuj napisy między językami (eksperymentalne)",
+  "When the audio and subtitle use different languages, Harbor compares a release-matched subtitle in the audio language. It only offers a fix unless every safety check is measured.":
+    "Gdy dźwięk i napisy używają różnych języków, Harbor porównuje napisy dopasowane do wydania w języku ścieżki dźwiękowej. Dopóki wszystkie kontrole bezpieczeństwa nie zostaną zmierzone, proponuje jedynie poprawkę.",
+  "New York Times": "New York Times",
+  "Bestseller lists in the eBook section.": "Listy bestsellerów w sekcji eBooków.",
+  "New York Times · bestseller lists": "New York Times · listy bestsellerów",
+  "NYT Books API key": "Klucz API NYT Books",
+  "Choose whether Harbor prefers direct and debrid sources, peer-to-peer torrents, or shows both.":
+    "Wybierz, czy Harbor ma preferować źródła bezpośrednie i debrid, torrenty peer-to-peer, czy wyświetlać oba typy.",
 };
 
 export default coverage;

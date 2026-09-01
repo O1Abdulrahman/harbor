@@ -22,6 +22,7 @@ import { useTogether } from "./together/provider";
 import type { SportsGame } from "./sports/espn";
 import { beginMarathonAdvance } from "./fullscreen-state";
 import { consumeBack } from "./back-intercept";
+import type { SubtitleLoadMetadata } from "./subtitles/types";
 
 export type View =
   | "home"
@@ -79,8 +80,20 @@ export type PlayerSrc = {
   subtitle?: string;
   notWebReady?: boolean;
   isAnime?: boolean;
-  subtitles?: Array<{ url: string; lang?: string; id?: string }>;
-  subtitlePreselect?: { off: boolean; url?: string; lang?: string; title?: string };
+  subtitles?: Array<{
+    url: string;
+    lang?: string;
+    id?: string;
+    /** The path came from the user's local library or a configured home server, not an addon. */
+    trustedSource?: boolean;
+  }>;
+  subtitlePreselect?: {
+    off: boolean;
+    url?: string;
+    lang?: string;
+    title?: string;
+    metadata?: SubtitleLoadMetadata;
+  };
   attempt?: number;
   autoFired?: boolean;
   resume?: boolean;
@@ -101,6 +114,8 @@ export type PlayerSrc = {
 };
 
 export type PlayerStreamRef = {
+  /** Exact media filename selected after local/torrent/debrid resolution. */
+  resolvedFilename?: string | null;
   infoHash?: string | null;
   fileIdx?: number | null;
   addonId?: string | null;

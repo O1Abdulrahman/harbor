@@ -1,8 +1,13 @@
 import { useSettings } from "@/lib/settings";
 import { Section, ToggleRow } from "../shared";
-import { PickerLayoutPreview, StreamDescriptionPreview, TorrentNamePreview } from "../picker-previews";
+import {
+  PickerLayoutPreview,
+  StreamDescriptionPreview,
+  TorrentNamePreview,
+} from "../picker-previews";
 import { ChoiceBlock } from "../player-panel/choice";
 import { useT } from "@/lib/i18n";
+import { StreamModeToggle } from "@/components/stream-mode-toggle";
 
 export function PickerTab() {
   const t = useT();
@@ -11,7 +16,9 @@ export function PickerTab() {
     <>
       <Section
         title={t("Picker layout")}
-        subtitle={t("Condensed shows a top pick, quality tiles, and a drawer. Stremio is a flat list grouped by addon, no scoring.")}
+        subtitle={t(
+          "Condensed shows a top pick, quality tiles, and a drawer. Stremio is a flat list grouped by addon, no scoring.",
+        )}
       >
         <PickerLayoutPicker
           value={settings.pickerLayout}
@@ -21,8 +28,22 @@ export function PickerTab() {
       </Section>
 
       <Section
+        title={t("Source mode")}
+        subtitle={t(
+          "Choose whether Harbor prefers direct and debrid sources, peer-to-peer torrents, or shows both.",
+        )}
+      >
+        <StreamModeToggle
+          mode={settings.streamMode}
+          onChange={(mode) => update({ streamMode: mode })}
+        />
+      </Section>
+
+      <Section
         title={t("Refresh button")}
-        subtitle={t("Where the Refresh button sits in the picker header. Default keeps it on the right, across from Back.")}
+        subtitle={t(
+          "Where the Refresh button sits in the picker header. Default keeps it on the right, across from Back.",
+        )}
       >
         <ToggleRow
           label={t("Move Refresh next to Back")}
@@ -34,11 +55,15 @@ export function PickerTab() {
 
       <Section
         title={t("Torrent name")}
-        subtitle={t("Show each source's full release filename on the condensed layout. The Stremio layout already shows it.")}
+        subtitle={t(
+          "Show each source's full release filename on the condensed layout. The Stremio layout already shows it.",
+        )}
       >
         <ToggleRow
           label={t("Show torrent name")}
-          sub={t("Display the raw release filename under each source in the condensed picker. Off keeps rows compact.")}
+          sub={t(
+            "Display the raw release filename under each source in the condensed picker. Off keeps rows compact.",
+          )}
           value={settings.pickerShowFilename}
           onChange={(v) => update({ pickerShowFilename: v })}
         />
@@ -47,11 +72,15 @@ export function PickerTab() {
 
       <Section
         title={t("Stream descriptions")}
-        subtitle={t("How much of each source's description the Stremio picker layout shows. Full keeps everything the addon sends, which matters for AIOStreams and other custom formats.")}
+        subtitle={t(
+          "How much of each source's description the Stremio picker layout shows. Full keeps everything the addon sends, which matters for AIOStreams and other custom formats.",
+        )}
       >
         <ToggleRow
           label={t("Show full descriptions")}
-          sub={t("Show the addon's complete description instead of trimming it to a few lines. Turn off for shorter, tidier rows.")}
+          sub={t(
+            "Show the addon's complete description instead of trimming it to a few lines. Turn off for shorter, tidier rows.",
+          )}
           value={settings.fullStreamDescription}
           onChange={(v) => update({ fullStreamDescription: v })}
         />
@@ -73,12 +102,16 @@ function PickerLayoutPicker({
     {
       id: "condensed",
       label: t("Condensed"),
-      sub: t("Default. Top pick at the top, quality tiles, and an All-Sources drawer. Harbor scores and ranks results."),
+      sub: t(
+        "Default. Top pick at the top, quality tiles, and an All-Sources drawer. Harbor scores and ranks results.",
+      ),
     },
     {
       id: "stremio",
       label: "Stremio",
-      sub: t("Flat list of sources grouped by addon, with a filter dropdown. No re-ranking. Closest match to the Stremio app's stream picker."),
+      sub: t(
+        "Flat list of sources grouped by addon, with a filter dropdown. No re-ranking. Closest match to the Stremio app's stream picker.",
+      ),
     },
   ];
   return (

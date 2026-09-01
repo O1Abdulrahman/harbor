@@ -130,6 +130,14 @@ export function AutoSyncPanel() {
                 value={settings.subtitleAutoSyncAsr}
                 onChange={(v) => update({ subtitleAutoSyncAsr: v })}
               />
+              <ToggleRow
+                label={t("Match subtitles across languages (experimental)")}
+                sub={t(
+                  "When the audio and subtitle use different languages, Harbor compares a release-matched subtitle in the audio language. It only offers a fix unless every safety check is measured.",
+                )}
+                value={settings.subtitleAutoSyncPivot}
+                onChange={(v) => update({ subtitleAutoSyncPivot: v })}
+              />
             </SettingGroup>
           </Nested>
         )}

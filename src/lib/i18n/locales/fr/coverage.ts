@@ -1110,6 +1110,31 @@ const coverage: Record<string, string> = {
   days: "jours",
   "{n} episodes on home servers": "{n} épisodes sur les serveurs personnels",
   "{voice} could not be generated. {message}": "Impossible de générer {voice}. {message}",
+  "Direct/debrid": "Direct/debrid",
+  "Audio verified": "Vérifié par l’audio",
+  "Watchlist overlaps ({n})": "Éléments communs dans la liste de suivi ({n})",
+  "Favorites overlap ({n})": "Éléments communs dans les favoris ({n})",
+  "Addons overlap ({n})": "Extensions communes ({n})",
+  "Import selected data?": "Importer les données sélectionnées ?",
+  "Show direct, debrid, and peer-to-peer sources":
+    "Afficher les sources directes, debrid et pair à pair",
+  "Prefer direct and debrid sources; keep P2P when only web links are available":
+    "Privilégier les sources directes et debrid ; conserver le P2P lorsque seuls des liens web sont disponibles",
+  "Prefer peer-to-peer torrent sources": "Privilégier les sources torrent pair à pair",
+  "Hearing impaired": "Sourds et malentendants",
+  "Foreign-only": "Passages en langue étrangère uniquement",
+  "Machine-translated": "Traduit automatiquement",
+  "Direct/debrid only": "Direct/debrid uniquement",
+  "Match subtitles across languages (experimental)":
+    "Faire correspondre les sous-titres entre langues (expérimental)",
+  "When the audio and subtitle use different languages, Harbor compares a release-matched subtitle in the audio language. It only offers a fix unless every safety check is measured.":
+    "Lorsque l’audio et les sous-titres utilisent des langues différentes, Harbor compare un sous-titre correspondant à la version dans la langue audio. Harbor propose seulement une correction tant que chaque contrôle de sécurité n’a pas été mesuré.",
+  "New York Times": "New York Times",
+  "Bestseller lists in the eBook section.": "Listes de best-sellers dans la section eBook.",
+  "New York Times · bestseller lists": "New York Times · listes de best-sellers",
+  "NYT Books API key": "Clé API NYT Books",
+  "Choose whether Harbor prefers direct and debrid sources, peer-to-peer torrents, or shows both.":
+    "Choisissez si Harbor privilégie les sources directes et debrid, les torrents pair à pair ou affiche les deux.",
 };
 
 export default coverage;
