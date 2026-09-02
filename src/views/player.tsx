@@ -564,7 +564,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
   const stallSrcRef = useRef(src);
   stallSrcRef.current = src;
   useEffect(() => {
-    if (!settings.autoNextStreamOnStall || src.isLive || inRoom) return;
+    if (!settings.autoNextStreamOnStall || !src.autoFired || src.isLive || inRoom) return;
     const timer = window.setTimeout(() => {
       const currentSnap = snapRef.current;
       if (
@@ -593,6 +593,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
   }, [
     src.url,
     src.isLive,
+    src.autoFired,
     settings.autoNextStreamOnStall,
     settings.autoNextStreamOnStallSec,
     inRoom,
@@ -807,6 +808,29 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
       }
     };
   }, [bridgeRef, src.url]);
+
+  useEffect(() => {
+    const clear = (e: PointerEvent) => {
+      const hold = mouseHoldRef.current;
+      if (hold.pointerId == null || hold.pointerId !== e.pointerId) return;
+      if (hold.timer != null) {
+        window.clearTimeout(hold.timer);
+        hold.timer = null;
+      }
+      if (hold.engaged) {
+        bridgeRef.current?.setRate(hold.baseRate);
+        setMouseHoldSpeedActive(false);
+      }
+      hold.pointerId = null;
+      hold.engaged = false;
+    };
+    window.addEventListener("pointerup", clear);
+    window.addEventListener("pointercancel", clear);
+    return () => {
+      window.removeEventListener("pointerup", clear);
+      window.removeEventListener("pointercancel", clear);
+    };
+  }, [bridgeRef]);
 
   const reloadBusyRef = useRef(false);
   const reloadSource = useCallback(() => {
@@ -1354,11 +1378,18 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
           const pointerId = e.pointerId;
           hold.pointerId = pointerId;
           hold.baseRate = snapRef.current.rate;
-          e.currentTarget.setPointerCapture(pointerId);
+          const stage = e.currentTarget;
           hold.timer = window.setTimeout(() => {
             hold.timer = null;
             if (hold.pointerId !== pointerId || snapRef.current.status !== "playing") return;
             hold.engaged = true;
+            try {
+              stage.setPointerCapture(pointerId);
+            } catch {
+              hold.pointerId = null;
+              hold.engaged = false;
+              return;
+            }
             setMouseHoldSpeedActive(true);
             bridgeRef.current?.setRate(Math.max(2, hold.baseRate));
           }, 350);
