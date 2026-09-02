@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { HarborLoader } from "@/components/harbor-loader";
 import type { PlayerSnapshot } from "@/lib/player/bridge";
 import { isLocalUrl } from "@/lib/player/local-url";
-import { getPlaybackPosition, usePlaybackFlag } from "@/lib/player/playback-clock";
+import { usePlaybackPositionGated } from "@/lib/player/playback-clock";
 import type { PlayerSrc } from "@/lib/view";
 import { Topbar } from "@/chrome/topbar";
 import { useT } from "@/lib/i18n";
@@ -74,9 +74,10 @@ export function CinematicPlayerLoader({
   const streamBytes = src.streamRef?.size ?? engineStats?.streamLen ?? null;
   const ready = isInfoHash ? readinessScore(engineStats ?? null, true) : 0;
   const heavyForP2p = isInfoHash && streamBytes != null && streamBytes > 20 * 1024 ** 3;
-  const hasProgress = usePlaybackFlag(() => getPlaybackPosition() > 0.3);
+  const clockTick = usePlaybackPositionGated(true);
+  void clockTick;
   const everPlayedRef = useRef(false);
-  if (snap.firstFrameReady || snap.positionSec > 0 || hasProgress) {
+  if (snap.firstFrameReady) {
     everPlayedRef.current = true;
   }
   const sessionKey = `${src.meta.id}::${src.episode?.season ?? ""}:${src.episode?.episode ?? ""}`;
