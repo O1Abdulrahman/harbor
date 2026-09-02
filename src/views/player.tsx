@@ -35,7 +35,14 @@ import {
   resolvePlaybackDownloadedFraction,
   setPlaybackDownloaded,
 } from "@/lib/player/playback-clock";
-import { isBundledEngineUrl, isLocalEngineUrl } from "@/lib/stremio-server";
+import {
+  awaitCastServerReady,
+  isBundledEngineUrl,
+  isLocalEngineUrl,
+  restartCastServer,
+} from "@/lib/stremio-server";
+import { playbackStartupProfile } from "@/lib/player/startup-profile";
+import { isWeb } from "@/lib/platform";
 import { usePauseOnInactive } from "./player/hooks/use-pause-on-inactive";
 import { spoilerMaskFor } from "@/lib/spoilers";
 import { usePlayerWatched } from "./player/hooks/use-player-watched";
@@ -801,6 +808,82 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     };
   }, [bridgeRef, src.url]);
 
+  const reloadBusyRef = useRef(false);
+  const reloadSource = useCallback(() => {
+    const b = bridgeRef.current;
+    if (!b || reloadBusyRef.current) return;
+    const swapped = liveUrl !== src.url;
+    const url = swapped ? liveUrl : (transcodedUrl ?? src.url);
+    if (!url) return;
+    reloadBusyRef.current = true;
+    const wasPlaying = snapRef.current.status === "playing";
+    const resumeAt = isLiveLike ? 0 : Math.max(0, getPlaybackPosition());
+    showSyncToast("ok", t("Reloading the stream…"));
+    void b
+      .load({
+        url,
+        startupProfile: playbackStartupProfile(liveStreamRef ?? src.streamRef),
+        subtitles: src.subtitles,
+        notWebReady: src.notWebReady,
+        isLive: isLiveLike,
+        headers: swapped ? undefined : src.headers,
+        startAtSec: resumeAt > 5 ? resumeAt : undefined,
+      })
+      .then(() => {
+        if (wasPlaying) return b.play().catch(() => {});
+      })
+      .catch(() => {
+        showSyncToast("error", t("Couldn't reload the stream. Try picking another source."));
+      })
+      .finally(() => {
+        reloadBusyRef.current = false;
+      });
+  }, [
+    bridgeRef,
+    isLiveLike,
+    liveStreamRef,
+    liveUrl,
+    showSyncToast,
+    src.headers,
+    src.notWebReady,
+    src.streamRef,
+    src.subtitles,
+    src.url,
+    t,
+    transcodedUrl,
+  ]);
+
+  const serverRestartBusyRef = useRef(false);
+  const restartStreamServer = useCallback(() => {
+    if (serverRestartBusyRef.current) return;
+    if (isWeb()) {
+      showSyncToast("error", t("Harbor's streaming server only runs in the desktop app."));
+      return;
+    }
+    serverRestartBusyRef.current = true;
+    showSyncToast("ok", t("Restarting the streaming server…"));
+    void (async () => {
+      const failure = await restartCastServer();
+      if (failure) {
+        serverRestartBusyRef.current = false;
+        showSyncToast("error", t("Couldn't restart the streaming server."));
+        return;
+      }
+      const ready = await awaitCastServerReady(10_000);
+      serverRestartBusyRef.current = false;
+      if (!ready) {
+        showSyncToast("error", t("The streaming server didn't come back up."));
+        return;
+      }
+      const url = liveUrl !== src.url ? liveUrl : (transcodedUrl ?? src.url);
+      if (isBundledEngineUrl(url) || isLocalEngineUrl(url)) {
+        reloadSource();
+        return;
+      }
+      showSyncToast("ok", t("Streaming server restarted."));
+    })();
+  }, [liveUrl, reloadSource, showSyncToast, src.url, t, transcodedUrl]);
+
   const { holdSpeedActive, showStats, subtitleOffsetSec } = usePlayerHotkeys({
     bridgeRef,
     snap,
@@ -844,6 +927,8 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     onAnime4kOff: () => {
       anime4k.setMode("off");
     },
+    onReloadSource: reloadSource,
+    onRestartServer: restartStreamServer,
     gif,
     clip,
     videoFill,
