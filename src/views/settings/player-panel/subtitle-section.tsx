@@ -397,7 +397,7 @@ export function SubtitleStylePanel() {
         <ToggleRow
           label={t("Hide sound effects and speaker names")}
           sub={t(
-            "Removes bracketed descriptions like [door creaks] and shouted speaker labels like JOHN: while subtitles play, so a release that only ships an SDH track still reads as plain dialogue. Song lyrics, ordinary parentheses and non-Latin scripts are left alone. Skipped on forced and picture-based tracks.",
+            "Removes bracketed descriptions like [door creaks] and speaker labels like JOHN: while subtitles play, so a release that only ships an SDH track still reads as plain dialogue. It also removes other bracketed text, so an occasional on-screen sign or lyric may go with it. Skipped on forced tracks, picture-based tracks, and any language that does not use the Latin alphabet.",
           )}
           value={settings.subHideSdh}
           onChange={(v) => update({ subHideSdh: v })}

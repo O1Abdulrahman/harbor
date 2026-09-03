@@ -1,11 +1,11 @@
 import {
-  CircleHelp,
   LoaderCircle,
   Pencil,
   Plus,
   RefreshCw,
   Trash2,
 } from "lucide-react";
+import { UiIcon } from "@/components/ui-icon";
 import {
   useCallback,
   useEffect,
@@ -470,7 +470,7 @@ function TokenHelpButton({ open, setOpen }: { open: boolean; setOpen: (open: boo
         onMouseLeave={hideSoon}
         className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-subtle transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
-        <CircleHelp size={20} />
+        <UiIcon name="help" className="h-5 w-5" />
       </button>
       {open &&
         box &&

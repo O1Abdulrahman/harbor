@@ -8,13 +8,13 @@ import { stripSdhText } from "../src/lib/subtitles/sdh-filter.ts";
 
 const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("bracketed sound descriptions go, in every script", () => {
+test("bracketed sound descriptions go, but only in latin script", () => {
   assert.equal(stripSdhText("[door creaks]"), "");
   assert.equal(stripSdhText("[DOOR CREAKS]"), "");
-  assert.equal(stripSdhText("[скрип двери]"), "");
-  assert.equal(stripSdhText("[موسيقى حزينة]"), "");
-  assert.equal(stripSdhText("[הדלת חורקת]"), "");
-  assert.equal(stripSdhText("[歌詞]"), "");
+  assert.equal(stripSdhText("[скрип двери]"), "[скрип двери]");
+  assert.equal(stripSdhText("[موسيقى حزينة]"), "[موسيقى حزينة]");
+  assert.equal(stripSdhText("[הדלת חורקת]"), "[הדלת חורקת]");
+  assert.equal(stripSdhText("[歌詞]"), "[歌詞]");
   assert.equal(stripSdhText("[music] [more]"), "");
   assert.equal(stripSdhText("- [door slams]"), "");
   assert.equal(stripSdhText("[door creaks] {whispered dialogue}"), "{whispered dialogue}");
@@ -60,7 +60,7 @@ test("the all-caps rule is ascii only, so non-latin speaker labels survive untou
 
 test("parentheses only go when the content is shouted latin, so real asides survive", () => {
   assert.equal(stripSdhText("(OMINOUS MUSIC)"), "");
-  assert.equal(stripSdhText("he said (MUSIC) loudly"), "he said loudly");
+  assert.equal(stripSdhText("he said (MUSIC) loudly"), "he said (MUSIC) loudly");
   assert.equal(stripSdhText("(A) start"), "start");
 
   assert.equal(stripSdhText("(ominous music)"), "(ominous music)");
@@ -92,7 +92,7 @@ test("multi-line cues drop only the lines that empty out", () => {
 
 test("a line that keeps any real character is kept, orphan punctuation and all", () => {
   assert.equal(stripSdhText("Meet me at [REDACTED]."), "Meet me at .");
-  assert.equal(stripSdhText("MAN (V.O.): Long ago."), "MAN : Long ago.");
+  assert.equal(stripSdhText("MAN (V.O.): Long ago."), "MAN (V.O.): Long ago.");
   assert.equal(stripSdhText("— SFX: [glass shatters]"), "— SFX:");
   assert.equal(stripSdhText("1. Numbered list item"), "1. Numbered list item");
 });
@@ -135,5 +135,7 @@ test("the setting is off by default and gated off for forced and foreign-only tr
   assert.match(defaults, /subHideSdh: false,/);
   const media = read("src/views/player/hooks/use-player-media.ts");
   assert.match(media, /sdhFilterAllowed/);
-  assert.match(media, /!selectedSubTrack\?\.forced && !selectedSubTrack\?\.foreignOnly/);
+  assert.match(media, /!selectedSubTrack\?\.forced/);
+  assert.match(media, /!selectedSubTrack\?\.foreignOnly/);
+  assert.match(media, /sdhSafeForLanguage\(selectedSubTrack\?\.lang\)/);
 });

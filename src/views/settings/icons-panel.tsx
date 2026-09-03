@@ -11,9 +11,56 @@ type Glob = Record<string, string>;
 type LazyGlob = Record<string, () => Promise<unknown>>;
 
 const NAV_URL = import.meta.glob("../../assets/nav-icons/*.svg", { eager: true, query: "?url", import: "default" }) as Glob;
-const UI_URL = import.meta.glob("../../assets/ui-icons/*.svg", { eager: true, query: "?url", import: "default" }) as Glob;
+const UI_ALL = import.meta.glob("../../assets/ui-icons/*.svg", { eager: true, query: "?url", import: "default" }) as Glob;
+const NOT_OURS = ["help", "remindme"];
+const UI_URL: Glob = Object.fromEntries(
+  Object.entries(UI_ALL).filter(([key]) => {
+    const name = key.split("/").pop()?.replace(".svg", "") ?? "";
+    return !NOT_OURS.includes(name);
+  }),
+);
 
-const SVG_RAW = import.meta.glob(["../../assets/nav-icons/*.svg", "../../assets/ui-icons/*.svg"], {
+const PLAYER_URL: Glob = {
+  "/player-icons/anime4k.svg": "/player-icons/anime4k.svg",
+  "/player-icons/aspect.svg": "/player-icons/aspect.svg",
+  "/player-icons/audio.svg": "/player-icons/audio.svg",
+  "/player-icons/back.svg": "/player-icons/back.svg",
+  "/player-icons/cast--connected.svg": "/player-icons/cast--connected.svg",
+  "/player-icons/cast--idle.svg": "/player-icons/cast--idle.svg",
+  "/player-icons/download--complete.svg": "/player-icons/download--complete.svg",
+  "/player-icons/download--downloading.svg": "/player-icons/download--downloading.svg",
+  "/player-icons/download--error.svg": "/player-icons/download--error.svg",
+  "/player-icons/download--idle.svg": "/player-icons/download--idle.svg",
+  "/player-icons/draw-toggle--active.svg": "/player-icons/draw-toggle--active.svg",
+  "/player-icons/draw-toggle--inactive.svg": "/player-icons/draw-toggle--inactive.svg",
+  "/player-icons/dvr--idle.svg": "/player-icons/dvr--idle.svg",
+  "/player-icons/dvr--recording.svg": "/player-icons/dvr--recording.svg",
+  "/player-icons/fullscreen--fullscreen.svg": "/player-icons/fullscreen--fullscreen.svg",
+  "/player-icons/fullscreen--windowed.svg": "/player-icons/fullscreen--windowed.svg",
+  "/player-icons/next-episode.svg": "/player-icons/next-episode.svg",
+  "/player-icons/pick-another.svg": "/player-icons/pick-another.svg",
+  "/player-icons/pip--active.svg": "/player-icons/pip--active.svg",
+  "/player-icons/pip--inactive.svg": "/player-icons/pip--inactive.svg",
+  "/player-icons/play-pause--paused.svg": "/player-icons/play-pause--paused.svg",
+  "/player-icons/play-pause--playing.svg": "/player-icons/play-pause--playing.svg",
+  "/player-icons/prev-episode.svg": "/player-icons/prev-episode.svg",
+  "/player-icons/rtx-hdr.svg": "/player-icons/rtx-hdr.svg",
+  "/player-icons/rtx-vsr.svg": "/player-icons/rtx-vsr.svg",
+  "/player-icons/screenshot.svg": "/player-icons/screenshot.svg",
+  "/player-icons/seek-back.svg": "/player-icons/seek-back.svg",
+  "/player-icons/seek-forward.svg": "/player-icons/seek-forward.svg",
+  "/player-icons/shader.svg": "/player-icons/shader.svg",
+  "/player-icons/song-id.svg": "/player-icons/song-id.svg",
+  "/player-icons/speed.svg": "/player-icons/speed.svg",
+  "/player-icons/subtitle.svg": "/player-icons/subtitle.svg",
+  "/player-icons/volume--mute.svg": "/player-icons/volume--mute.svg",
+  "/player-icons/volume.svg": "/player-icons/volume.svg",
+};
+
+const SVG_RAW = import.meta.glob([
+  "../../assets/nav-icons/*.svg",
+  "../../assets/ui-icons/*.svg",
+], {
   query: "?raw",
   import: "default",
 }) as LazyGlob;
@@ -144,8 +191,16 @@ function IconSet({
   const save = useCallback(
     async (key: string, name: string) => {
       const load = SVG_RAW[key];
-      if (!load) return;
-      const raw = (await load()) as string;
+      let raw: string;
+      if (load) {
+        raw = (await load()) as string;
+      } else if (key.startsWith("/")) {
+        const res = await fetch(key).catch(() => null);
+        if (!res || !res.ok) return;
+        raw = await res.text();
+      } else {
+        return;
+      }
       const ok = await downloadText(`${name}.svg`, raw, ["svg"], "SVG");
       if (ok) flash(key);
     },
@@ -293,6 +348,13 @@ export function IconsPanel() {
 
       <Section title={t("Interface")} subtitle={t("Buttons, states, and the things that live on a card.")}>
         <IconSet glob={UI_URL} savedId={savedId} flash={flash} />
+      </Section>
+
+      <Section
+        title={t("Player")}
+        subtitle={t("The chrome abiyyu drew for the player: transport, subtitles, shaders, and the rest.")}
+      >
+        <IconSet glob={PLAYER_URL} savedId={savedId} flash={flash} />
       </Section>
 
       <Section title={t("Navigation animations")} subtitle={t("What the sidebar icons do when you land on them.")}>

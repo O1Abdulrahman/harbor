@@ -1,4 +1,5 @@
-import { HelpCircle, Lock, X } from "lucide-react";
+import { Lock, X } from "lucide-react";
+import { UiIcon } from "@/components/ui-icon";
 import { useEffect, useRef, type ReactNode } from "react";
 import { HoverTooltip } from "@/components/hover-tooltip";
 import { ModalShell, useModalExit } from "@/components/modal-shell";
@@ -28,7 +29,7 @@ export function InfoTip({ text, sub }: { text: string; sub?: string }) {
   return (
     <HoverTooltip label={text} sublabel={sub} side="top" align="start">
       <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-ink-subtle transition-colors hover:text-ink">
-        <HelpCircle size={16} strokeWidth={2.2} />
+        <UiIcon name="help" className="h-4 w-4" />
       </span>
     </HoverTooltip>
   );

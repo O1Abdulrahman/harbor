@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { UiIcon } from "@/components/ui-icon";
 import fanartLogo from "@/assets/addon-logos/fanarttv.svg";
 import mdblistLogo from "@/assets/addon-logos/mdblist.png";
 import omdbLogo from "@/assets/addon-logos/omdb.png";
@@ -6,7 +7,6 @@ import rpdbLogo from "@/assets/addon-logos/rpdb.png";
 import auddLogo from "@/assets/addon-logos/auddio.webp";
 import tmdbLogo from "@/assets/addon-logos/tmdb.png";
 import tvdbLogo from "@/assets/addon-logos/tvdb.svg";
-import { HelpCircle } from "lucide-react";
 import { HoverTooltip } from "@/components/hover-tooltip";
 import { useSettings } from "@/lib/settings";
 import { tvFocus } from "@/lib/keyboard-navigation";
@@ -97,7 +97,7 @@ export function useProviderKeys({
   const guideButton = (onClick: () => void, tip: string) => (
     <HoverTooltip side="top" align="center" label={tip}>
       <button type="button" onClick={onClick} className={ROW_ACTION}>
-        <HelpCircle size={18} strokeWidth={2.2} />
+        <UiIcon name="help" className="h-[18px] w-[18px]" />
         {t("How to get this")}
       </button>
     </HoverTooltip>

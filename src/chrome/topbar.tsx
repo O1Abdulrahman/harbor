@@ -97,7 +97,8 @@ export function Topbar({ connecting = false }: { connecting?: boolean } = {}) {
   const layout = kid ? "sidebar" : preview ? preview.layout : activeLayout(settings.theme);
   const onLiveRoot = topKind === "live";
   const sidebarHidden = connecting || view === "settings" || onLiveRoot || topKind === "picker";
-  const hideSearch = view === "addons" || connecting || topKind === "picker";
+  const inSettings = view === "settings";
+  const hideSearch = view === "addons" || connecting || topKind === "picker" || inSettings;
   const sidebarOffset =
     layout === "stremio"
       ? "ps-[80px]"
@@ -173,15 +174,17 @@ export function Topbar({ connecting = false }: { connecting?: boolean } = {}) {
             {...dragProps}
             className="pointer-events-auto flex h-full items-center justify-end gap-2"
           >
-          <div className="hidden items-center gap-2 min-[900px]:flex">
-          <RecordingPill />
-          {settings.navbarSleepTimer && <SleepTimerButton />}
-          <DownloadsButton />
-          {!kid && <NotificationCenter />}
-          {!kid && <BookmarksButton />}
-          {!onLiveRoot && !kid && <TogetherButton />}
-          {!kid && <ProfileButton />}
-          </div>
+          {!inSettings && (
+            <div className="hidden items-center gap-2 min-[900px]:flex">
+              <RecordingPill />
+              {settings.navbarSleepTimer && <SleepTimerButton />}
+              <DownloadsButton />
+              {!kid && <NotificationCenter />}
+              {!kid && <BookmarksButton />}
+              {!onLiveRoot && !kid && <TogetherButton />}
+              {!kid && <ProfileButton />}
+            </div>
+          )}
             {IS_TAURI && !settings.useNativeTitleBar && !settings.hybridTitleBar && (
             <div className="ms-1 flex shrink-0 items-center gap-2">
               <Control label={t("chrome.minimize")} onClick={minimize}>

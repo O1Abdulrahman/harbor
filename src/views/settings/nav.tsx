@@ -1043,7 +1043,7 @@ const NAV_GROUPS: Array<{ heading: string | null; items: NavItem[] }> = [
   },
 ];
 
-type SettingsOption = {
+export type SettingsOption = {
   label: string;
   section: SectionId;
   anchorTitle?: string;
@@ -9912,7 +9912,7 @@ setSettingsSearchVocabulary([
   ]),
 ]);
 
-function useNavSearch(trimmed: string) {
+export function useNavSearch(trimmed: string) {
   const t = useT();
   const matches = useMemo<NavItem[] | null>(() => {
     if (!trimmed) return null;

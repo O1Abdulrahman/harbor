@@ -2,15 +2,15 @@ import { lazy, startTransition, Suspense, useEffect, useLayoutEffect, useRef, us
 import type { LibraryKey } from "./settings/library-panel";
 import type { RelayMode } from "./settings/relay-section";
 import type { DebridKey } from "./settings/streaming-sources-panel";
-import { SettingsNav, SettingsTools } from "./settings/nav";
+import { SettingsTools } from "./settings/nav";
 import { groupForSection, TOP_GROUPS } from "./settings/groups";
 import { requestTracker } from "./settings/tracker-request";
 import { SubTabsProvider, type SubTabReg } from "./settings/sub-tabs";
+import { SettingsSidebar } from "./settings/settings-sidebar";
 import { PageActionsProvider, type PageActionReg } from "./settings/page-actions";
 import { SettingsFooter } from "./settings/settings-footer";
-import { SubTabBar } from "./settings/sub-tab-bar";
 import { SettingsActiveContext, type SectionId } from "./settings/shared";
-import { GroupLanding } from "./settings/group-landing";
+import { SectionCards } from "./settings/section-cards";
 import { LicensesPanel } from "./settings/licenses-panel";
 import { IconsPanel } from "./settings/icons-panel";
 import "./settings/tv-panel/store";
@@ -258,7 +258,7 @@ const SECTION_META: Record<SectionId, { label: string; sub: string }> = {
 };
 
 const CHROME_QUERY = 'header, [data-harbor-topchrome], [class~="fixed"]';
-const CHROME_GAP = 12;
+const CHROME_GAP = 4;
 const CHROME_FLOOR = 40;
 const CHROME_CEIL = 200;
 const CHROME_TOP_EDGE = 12;
@@ -362,8 +362,21 @@ export function Settings({ visible = true }: { visible?: boolean }) {
     });
   };
 
+  const pendingTab = useRef<string | null>(null);
+  const selectFromRail = (id: SectionId, tab?: string) => {
+    pendingTab.current = tab ?? null;
+    if (id === active) {
+      if (tab) subRegRef.current?.onChange(tab);
+      pendingTab.current = null;
+      return;
+    }
+    handleNav(id);
+  };
+
   useEffect(() => {
-    if (settingsSectionRequest.section) setActive(resolveSection(settingsSectionRequest.section));
+    if (!settingsSectionRequest.section) return;
+    setLanding(null);
+    setActive(resolveSection(settingsSectionRequest.section));
   }, [settingsSectionRequest]);
 
   useEffect(() => {
@@ -375,6 +388,14 @@ export function Settings({ visible = true }: { visible?: boolean }) {
   const subReg = subRegRaw && subRegRaw.tabs.length > 0 ? subRegRaw : null;
   const subRegRef = useRef<SubTabReg>(null);
   subRegRef.current = subReg;
+  useEffect(() => {
+    const want = pendingTab.current;
+    if (!want || !subReg) return;
+    if (subReg.tabs.some((tab) => tab.id === want)) {
+      pendingTab.current = null;
+      if (subReg.value !== want) subReg.onChange(want);
+    }
+  }, [subReg]);
   const triedTabs = useRef<Set<string>>(new Set());
   const restoreTab = useRef<string | null>(null);
   const pendingAnchorRef = useRef<string | null>(null);
@@ -514,31 +535,20 @@ export function Settings({ visible = true }: { visible?: boolean }) {
       />
       <div className="hset-grid">
         <SettingsTools query={query} setQuery={setQuery} onSubmit={handleNav} />
-        <div className="hset-heading" style={{ columnGap: 32 }}>
-          <h1 className="hset-title">
-            {landingGroup ? t(landingGroup.label) : t(SECTION_META[active].label)}
-          </h1>
-          {subReg && !chromeHidden && (
-            <div
-              className="hset-subtabs"
-              style={{
-                overflowX: "auto",
-                overflowY: "hidden",
-                scrollbarWidth: "none",
-              }}
-            >
-              <div style={{ minInlineSize: "max-content" }}>
-                <SubTabBar tabs={subReg.tabs} value={subReg.value} onChange={subReg.onChange} />
-              </div>
-            </div>
-          )}
+        <div className="hset-heading">
+          <div className="hset-content">
+            <h1 className="hset-title">
+              {landingGroup ? t(landingGroup.label) : t(SECTION_META[active].label)}
+            </h1>
+          </div>
         </div>
-        <SettingsNav
+        <SettingsSidebar
           active={active}
-          onChange={handleNav}
-          onOpenGroup={setLanding}
+          activeTab={subReg?.value ?? null}
+          meta={SECTION_META}
           query={query}
-          setQuery={setQuery}
+          onSelect={selectFromRail}
+          onJump={handleNav}
         />
         <main ref={scrollRef} className="hset-main" data-hset-wide={wide ? "" : undefined}>
         <div className="hset-content">
@@ -555,8 +565,8 @@ export function Settings({ visible = true }: { visible?: boolean }) {
             }
           >
           {landingGroup && (
-            <GroupLanding
-              group={landingGroup}
+            <SectionCards
+              sections={landingGroup.children}
               meta={SECTION_META}
               onOpen={(id) => handleNav(id)}
             />

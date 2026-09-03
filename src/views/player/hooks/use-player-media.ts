@@ -39,6 +39,7 @@ import { useAutoSync } from "./use-auto-sync";
 import { publishAutoSync } from "@/components/player/autosync/autosync-store";
 import { useVideoDownload } from "./use-video-download";
 import { useWebviewMemory } from "./use-webview-memory";
+import { sdhSafeForLanguage } from "@/lib/subtitles/sdh-filter";
 
 const HDR_NATIVE_GAMMAS = new Set(["pq", "hlg"]);
 
@@ -226,7 +227,10 @@ export function usePlayerMedia(params: {
       snap.audioTracks.length > 0 ||
       snap.subtitleTracks.length > 0);
   const suppressHtmlSubs = subAssNative || (subEmbed && selectedImageSub) || hdrNativeSurface;
-  const sdhFilterAllowed = !selectedSubTrack?.forced && !selectedSubTrack?.foreignOnly;
+  const sdhFilterAllowed =
+    !selectedSubTrack?.forced &&
+    !selectedSubTrack?.foreignOnly &&
+    sdhSafeForLanguage(selectedSubTrack?.lang);
   const hideSdh = settings.subHideSdh && sdhFilterAllowed;
   useSubStyleApply({
     engine,
