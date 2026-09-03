@@ -1929,4 +1929,8 @@ main:not(.fixed):not([data-live-page]) > :nth-child(1 of :not([class~="fixed"]))
   color: #6b5852 !important;
 }
 
+
+.harbor-service-glow {
+  display: none;
+}
 `;

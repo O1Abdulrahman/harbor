@@ -33,6 +33,42 @@ import { close, minimize, toggleMaximize, useMaximized } from "@/lib/window";
 
 const IS_TAURI = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 
+function PresenceAvatar({ name, src, color }: { name: string; src: string | null; color: string }) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (src && !failed) {
+    return (
+      <span
+        title={name}
+        className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full ring-2 ring-elevated"
+        style={{ boxShadow: `inset 0 0 0 1.5px ${color}` }}
+      >
+        <img
+          src={src}
+          alt=""
+          draggable={false}
+          className="h-full w-full object-cover"
+          onError={() => setFailed(true)}
+        />
+      </span>
+    );
+  }
+
+  return (
+    <span
+      title={name}
+      className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold text-canvas ring-2 ring-elevated"
+      style={{ backgroundColor: color }}
+    >
+      {(name.trim()[0] || "?").toUpperCase()}
+    </span>
+  );
+}
+
 export function Topbar({ connecting = false }: { connecting?: boolean } = {}) {
   const { chromeHidden, canGoBack, view, setView, topKind } = useView();
   const { settings } = useSettings();
@@ -312,29 +348,13 @@ export function TogetherButton({
             {visible.map((p) => {
               const self = p.id === clientId;
               const fallbackColor = `oklch(0.78 0.13 ${nameHue(p.name)})`;
-              const avatarSrc = self ? selfAvatar : p.avatar ?? null;
-              const color = self ? selfColor ?? fallbackColor : p.color ?? fallbackColor;
-              if (avatarSrc) {
-                return (
-                  <span
-                    key={p.id}
-                    title={p.name}
-                    className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full ring-2 ring-elevated"
-                    style={{ boxShadow: `inset 0 0 0 1.5px ${color}` }}
-                  >
-                    <img src={avatarSrc} alt="" draggable={false} className="h-full w-full object-cover" />
-                  </span>
-                );
-              }
               return (
-                <span
+                <PresenceAvatar
                   key={p.id}
-                  title={p.name}
-                  className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold text-canvas ring-2 ring-elevated"
-                  style={{ backgroundColor: color }}
-                >
-                  {(p.name.trim()[0] || "?").toUpperCase()}
-                </span>
+                  name={p.name}
+                  src={self ? selfAvatar : p.avatar ?? null}
+                  color={self ? selfColor ?? fallbackColor : p.color ?? fallbackColor}
+                />
               );
             })}
             {overflow > 0 && (

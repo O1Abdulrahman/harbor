@@ -226,6 +226,8 @@ export function usePlayerMedia(params: {
       snap.audioTracks.length > 0 ||
       snap.subtitleTracks.length > 0);
   const suppressHtmlSubs = subAssNative || (subEmbed && selectedImageSub) || hdrNativeSurface;
+  const sdhFilterAllowed = !selectedSubTrack?.forced && !selectedSubTrack?.foreignOnly;
+  const hideSdh = settings.subHideSdh && sdhFilterAllowed;
   useSubStyleApply({
     engine,
     settings,
@@ -238,12 +240,18 @@ export function usePlayerMedia(params: {
     svpActive,
     assScale: assNormalizeScale,
     subTrackId: selectedSubTrack?.id,
+    sdhFilterAllowed,
   });
   useEffect(() => {
     if (!subEmbed && !hdrNativeSurface) return;
     if (!bridgeReady) return;
     bridgeRef.current?.setSubVisible(subNativeRender);
   }, [subEmbed, hdrNativeSurface, subNativeRender, selectedSubTrack?.id, bridgeReady, bridgeKey]);
+  useEffect(() => {
+    if (engine !== "html5") return;
+    if (!bridgeReady) return;
+    bridgeRef.current?.setSubHideSdh?.(hideSdh);
+  }, [engine, bridgeReady, bridgeKey, hideSdh]);
   useSecondarySub({
     bridgeRef,
     snap,
