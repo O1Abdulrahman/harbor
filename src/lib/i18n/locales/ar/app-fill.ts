@@ -798,7 +798,7 @@ const appFill: Record<string, string> = {
   "Showing keyword matches instead": "عرض مطابقات الكلمات المفتاحية بدلاً من ذلك",
   "Season {s}": "الموسم {s}",
   "Search episodes": "البحث في الحلقات",
-  "Ask AI": "اسأل الذكاء الاصطناعي",
+  "Ask AI": "اسأل",
   "Find episodes by describing them": "ابحث عن الحلقات بوصفها",
   "Search episodes across all seasons": "البحث في الحلقات عبر جميع المواسم",
   Ongoing: "مستمر",
@@ -1343,6 +1343,36 @@ const appFill: Record<string, string> = {
     "يجري إغلاق Harbor. سيُنهي Harbor Setup التثبيت ثم يعيد فتحه.",
   "Harbor Setup did not finish updating Harbor. Nothing was changed.":
     "لم يُكمل Harbor Setup تحديث Harbor. لم يتغيّر شيء.",
+  Automatic: "تلقائي",
+  "Free web search": "بحث ويب مجاني",
+  "Search source": "مصدر البحث",
+  "AI assistant": "مساعد الذكاء الاصطناعي",
+  "Enable AI chat": "تفعيل محادثة الذكاء الاصطناعي",
+  "Show the AI chat button and assistant. Turning this off closes any open chat.":
+    "إظهار زر محادثة الذكاء الاصطناعي والمساعد. إيقافه يغلق أي محادثة مفتوحة.",
+  "Uses your OpenRouter key and balance for search.": "يستخدم مفتاح OpenRouter ورصيدك للبحث.",
+  "Live search was unavailable. Current facts could not be verified.":
+    "تعذّر البحث المباشر. لم يمكن التحقق من المعلومات الحالية.",
+  "Sources ({count})": "المصادر ({count})",
+  "Response stopped.": "تم إيقاف الرد.",
+  "Stop response": "إيقاف الرد",
+  "Failed to get recommendations.": "تعذّر الحصول على الاقتراحات.",
+  "Release status unconfirmed": "حالة الإصدار غير مؤكدة",
+  "Release date: {date}": "تاريخ الإصدار: {date}",
+  "{count} titles": "الأعمال: {count}",
+  "Show as list": "عرض كقائمة",
+  "Show as cards": "عرض كبطاقات",
+  "Jump to title {number}": "الانتقال إلى العمل {number}",
+  "Use the arrows to browse {count} titles": "استخدم الأسهم لتصفح {count} عملًا",
+  "Session usage resets when you clear the conversation. Includes research planning and reported search-model tokens.":
+    "يُصفّر استخدام الجلسة عند مسح المحادثة، ويشمل تخطيط البحث وتوكنات نموذج البحث المبلّغ عنها.",
+  "Tavily session: {credits} credits": "جلسة Tavily: ‏{credits} رصيد",
+  "Default · Fast": "افتراضي · سريع",
+  "Fast everyday recommendations": "اقتراحات سريعة للمشاهدة اليومية",
+  "Deeper analysis": "تحليل أعمق",
+  "For more complex requests": "للطلبات الأكثر تعقيدًا",
+  "AI session: {requests} requests · {tokens} reported tokens":
+    "جلسة الذكاء الاصطناعي: {requests} طلب · {tokens} توكن مُبلّغ عنه",
 };
 
 export default appFill;

@@ -18,6 +18,7 @@ import { StremioRail } from "@/chrome/stremio-rail";
 import { TopDock } from "@/chrome/topdock";
 import { CinematicOverlay } from "@/chrome/cinematic-overlay";
 import { Topbar, TogetherButton } from "@/chrome/topbar";
+import { ChatDrawer } from "@/components/ai-chat/chat-drawer";
 import { startMaintenance, subscribeMemoryPressure } from "@/lib/maintenance";
 import { MiddleClickScroll } from "@/lib/use-middle-click-scroll";
 import { exitWindowFullscreenOnPlayerClose, toggleWindowFullscreen } from "@/lib/fullscreen-state";
@@ -1874,6 +1875,7 @@ function Shell({ onReady }: { onReady?: () => void }) {
       <WebhookLoopMount />
       <MemoryHud />
       {!player && <OfflineBanner />}
+      {settings.aiChatEnabled && !player && !immersive && <ChatDrawer />}
     </div>
   );
 }

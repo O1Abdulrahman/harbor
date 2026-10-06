@@ -3841,6 +3841,13 @@ const SETTINGS_OPTIONS: SettingsOption[] = [
     keywords: ["clear snapshots", "wipe frames", "delete screenshots", "confirm clear", "storage"],
   },
   {
+    label: "Enable AI chat",
+    section: "library",
+    tab: "ai",
+    anchorTitle: "AI assistant",
+    keywords: ["ai chat", "chatbot", "assistant", "enable chat", "disable chat", "chat button"],
+  },
+  {
     label: "AI Search · natural-language search",
     section: "library",
     tab: "ai",

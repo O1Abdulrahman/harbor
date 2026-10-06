@@ -1230,6 +1230,45 @@ export function useKeyboardNavigation(options: TVNavigationOptions = {}) {
       const target = e.target instanceof HTMLElement ? e.target : null;
       const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
+      // Modal tools such as chat own their controls; global TV arrows and Enter
+      // must not move focus or activate navigation behind the open dialog.
+      const navigationIsolated =
+        getTopFocusScope()?.closest<HTMLElement>("[data-navigation-isolated]") ??
+        target?.closest<HTMLElement>("[data-navigation-isolated]");
+      if (navigationIsolated) {
+        if (e.key === "Tab") {
+          const focusable = Array.from(
+            navigationIsolated.querySelectorAll<HTMLElement>(
+              'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+            ),
+          ).filter((el) => el.getClientRects().length > 0);
+          if (focusable.length > 0) {
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey && (active === first || !navigationIsolated.contains(active))) {
+              e.preventDefault();
+              last.focus();
+            } else if (!e.shiftKey && (active === last || !navigationIsolated.contains(active))) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+          return;
+        }
+        if (target instanceof HTMLSelectElement && !isBackKey(e)) return;
+        if (isBackKey(e) && activeSearchEditEl !== active) {
+          const close = navigationIsolated.querySelector<HTMLElement>(
+            "[data-navigation-isolated-close]",
+          );
+          if (close) {
+            e.preventDefault();
+            e.stopPropagation();
+            close.click();
+          }
+          return;
+        }
+      }
+
       const activeIsSearch = isSearchLikeField(active);
       const isEditingSearch = !!activeSearchEditEl && activeSearchEditEl === active;
       const isNavigatingSearch =

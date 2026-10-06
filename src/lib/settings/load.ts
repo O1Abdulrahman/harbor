@@ -39,6 +39,7 @@ const RETIRED_GEMINI = new Set([
 ]);
 import { DEFAULT, STORAGE_KEY } from "./defaults";
 import type { Settings } from "./types";
+import { isSupportedGeminiChatModel } from "@/lib/ai-chat-models";
 import { adoptLegacyPlaylists, readPlaylists } from "@/lib/iptv/playlists-store";
 
 const HEX_RE = /^#[0-9a-f]{6}$/i;
@@ -255,6 +256,12 @@ function parseStoredSettings(raw: string | null): Settings {
     ) {
       parsed.songIdAiModel = DEFAULT.songIdAiModel;
     }
+    if (
+      typeof parsed.geminiAiModel === "string" &&
+      !isSupportedGeminiChatModel(parsed.geminiAiModel.trim())
+    ) {
+      parsed.geminiAiModel = DEFAULT.geminiAiModel;
+    }
     if (parsed.aiSearchModel) parsed.aiSearchModel = migrateModelId(parsed.aiSearchModel);
     if (parsed.aiSearchProvider !== "groq" && parsed.aiSearchProvider !== "openrouter") {
       parsed.aiSearchProvider = parsed.aiSearchModel
@@ -421,6 +428,17 @@ function parseStoredSettings(raw: string | null): Settings {
       traktRefreshToken: parsed.traktRefreshToken ?? DEFAULT.traktRefreshToken,
       traktExpiresAt: parsed.traktExpiresAt ?? DEFAULT.traktExpiresAt,
       traktUsername: parsed.traktUsername ?? DEFAULT.traktUsername,
+      geminiApiKey:
+        typeof parsed.geminiApiKey === "string" ? parsed.geminiApiKey : DEFAULT.geminiApiKey,
+      aiChatEnabled:
+        typeof parsed.aiChatEnabled === "boolean" ? parsed.aiChatEnabled : DEFAULT.aiChatEnabled,
+      geminiAiModel:
+        typeof parsed.geminiAiModel === "string" &&
+        isSupportedGeminiChatModel(parsed.geminiAiModel.trim())
+          ? parsed.geminiAiModel
+          : DEFAULT.geminiAiModel,
+      tavilyApiKey:
+        typeof parsed.tavilyApiKey === "string" ? parsed.tavilyApiKey : DEFAULT.tavilyApiKey,
       seekBackStepSec: sanitizeSeekStep(
         parsed.seekBackStepSec ?? legacySeekStep("back"),
         DEFAULT.seekBackStepSec,

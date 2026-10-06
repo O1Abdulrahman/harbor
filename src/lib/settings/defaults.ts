@@ -4,6 +4,7 @@ import {
 } from "@/lib/gamepad/cursor";
 import { DEFAULT_THEME } from "@/lib/theme";
 import { DEFAULT_FULLSCREEN_CLOCK_SIZE_PX } from "@/lib/local-time";
+import { DEFAULT_GEMINI_CHAT_MODEL } from "@/lib/ai-chat-models";
 import type { Settings } from "./types";
 
 export const STORAGE_KEY = "harbor.settings";
@@ -343,6 +344,10 @@ export const DEFAULT: Settings = {
   songIdProvider: "audd",
   songIdAiKey: "",
   songIdAiModel: "gemini-3.6-flash",
+  aiChatEnabled: true,
+  geminiApiKey: "",
+  geminiAiModel: DEFAULT_GEMINI_CHAT_MODEL,
+  tavilyApiKey: "",
   aiSearchKey: "",
   aiSearchModel: "",
   aiSearchProvider: "openrouter",
