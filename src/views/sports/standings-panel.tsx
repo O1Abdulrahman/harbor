@@ -1,5 +1,8 @@
+import { TeamProfileLink } from "./team-profile-link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useT } from "@/lib/i18n";
+import { ListOrdered } from "lucide-react";
+import { MatchDisclosure } from "./match-disclosure";
 import {
   fetchStandings,
   findStandingsRow,
@@ -122,7 +125,9 @@ function Table({
   group,
   columns,
   highlight,
+  leagueTag,
 }: {
+  leagueTag: string;
   group: StandingsGroup;
   columns: Column[];
   highlight: Set<string>;
@@ -135,15 +140,21 @@ function Table({
     const host = box.current;
     const marked = host?.querySelector<HTMLElement>("[data-standings-mark]");
     if (!host || !marked) return;
-    host.scrollTop = Math.max(0, marked.offsetTop - host.clientHeight / 2 + marked.offsetHeight / 2);
+    host.scrollTop = Math.max(
+      0,
+      marked.offsetTop - host.clientHeight / 2 + marked.offsetHeight / 2,
+    );
   }, [group]);
 
   return (
     <div
       ref={box}
-      className="relative max-h-[420px] overflow-y-auto rounded-lg bg-canvas/50 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="relative max-h-[min(420px,60vh)] overflow-auto rounded-lg bg-canvas/50 [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+      tabIndex={0}
+      role="region"
+      aria-label={t("Standings")}
     >
-      <div className="flex items-center gap-2 border-b border-edge-soft px-3 py-2">
+      <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-edge-soft bg-surface px-3 py-2">
         <span className="w-6 shrink-0 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-subtle">
           {t("#")}
         </span>
@@ -174,7 +185,10 @@ function Table({
             >
               {row.rank}
             </span>
-            <span className="flex min-w-0 flex-1 items-center gap-2.5">
+            <TeamProfileLink
+              className="flex min-w-0 flex-1 items-center gap-2.5"
+              team={{ id: row.teamId, name: row.name, logo: row.logo, league: leagueTag }}
+            >
               <Crest logo={row.logo} />
               <span
                 className={`truncate text-[12.5px] ${
@@ -183,7 +197,7 @@ function Table({
               >
                 {row.shortName || row.name}
               </span>
-            </span>
+            </TeamProfileLink>
             {shown.map((col) => (
               <span
                 key={col.key}
@@ -246,18 +260,16 @@ export function StandingsPanel({
   if (!table || !group) return null;
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center gap-3">
-        <span className="h-px flex-1 bg-edge-soft" />
-        <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
-          {title ?? t("Standings")}
-        </span>
-        <span className="h-px flex-1 bg-edge-soft" />
-      </div>
+    <MatchDisclosure title={title ?? t("Standings")} icon={ListOrdered} scroll={false}>
       {table.groups.length > 1 && (
         <GroupTabs groups={table.groups} selected={group.id} onSelect={setGroupId} />
       )}
-      <Table group={group} columns={headerSet(t, table.sport)} highlight={marks} />
-    </section>
+      <Table
+        leagueTag={leagueTag}
+        group={group}
+        columns={headerSet(t, table.sport)}
+        highlight={marks}
+      />
+    </MatchDisclosure>
   );
 }

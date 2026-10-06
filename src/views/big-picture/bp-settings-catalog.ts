@@ -145,6 +145,7 @@ export function bpSettingsControls(
   s: Settings,
   t: BpT,
   overscan: number,
+  sportsShown: boolean,
 ): BpControl[] {
   if (id === "picture") {
     return [
@@ -172,8 +173,15 @@ export function bpSettingsControls(
       {
         kind: "options",
         id: "backdrop",
-        label: t("Animated backdrop"),
+        label: t("Backdrop mosaic"),
         value: boolValue(s.bigPictureMosaic),
+        options: onOff(t),
+      },
+      {
+        kind: "options",
+        id: "backdropZoom",
+        label: t("Backdrop zoom"),
+        value: boolValue(s.bigPictureBackdropZoom),
         options: onOff(t),
       },
     ];
@@ -342,6 +350,14 @@ export function bpSettingsControls(
         detail: t("Add an M3U link or Xtream Codes login"),
         pane: "live",
       },
+      {
+        kind: "options",
+        id: "sportsTab",
+        label: t("Show Sports"),
+        value: boolValue(sportsShown),
+        options: onOff(t),
+      },
+      { kind: "action", id: "sportsNotice", label: t("Review Sports notice") },
     ];
   }
 

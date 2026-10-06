@@ -12,6 +12,7 @@ import { ensureNotifyPermission } from "@/lib/reminders";
 import { setItemWithRecovery } from "@/lib/storage-recovery";
 import { focusWindow } from "@/lib/window";
 import { tmdbImdbId } from "./providers/tmdb";
+import { automaticNotificationPermission } from "./notification-permission";
 
 const TMDB = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p";
@@ -534,13 +535,19 @@ export async function ensureDesktopNotifyPermission(): Promise<boolean> {
   }
 }
 
+/** Read permission for automatic events without prompting the user. */
+export async function hasDesktopNotifyPermission(): Promise<boolean> {
+  return automaticNotificationPermission(isDesktopTauri(), "Notification" in window ? Notification.permission : undefined,
+    () => invoke<boolean | null>("plugin:notification|is_permission_granted"));
+}
+
 function detailDeepLink(item: CalendarItem): string | undefined {
   if (!item.imdbId) return undefined;
   const metaType = item.type === "tv" ? "series" : "movie";
   return `harbor://detail/${metaType}/${encodeURIComponent(item.imdbId)}`;
 }
 
-async function sendDesktopNotification(
+export async function sendDesktopNotification(
   title: string,
   body: string,
   deepLink?: string,
@@ -589,6 +596,7 @@ export async function fireWebhook(
   kind: WebhookKind,
   url: string,
   payload: WebhookPayload,
+  signal?: AbortSignal,
 ): Promise<{ ok: boolean; status: number; error: string | null }> {
   if (kind === "desktop") {
     const granted = await ensureDesktopNotifyPermission();
@@ -661,6 +669,7 @@ export async function fireWebhook(
       if (embeds.length > 0) body.embeds = embeds;
       const res = await fetch(url, {
         method: "POST",
+        signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -675,6 +684,7 @@ export async function fireWebhook(
       const text = lines.join("\n");
       const res = await fetch(url, {
         method: "POST",
+        signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: extractTelegramChatId(url),
